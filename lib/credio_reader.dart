@@ -22,7 +22,9 @@ class CredioReader {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => WithdrawalScreen(),
+        builder: (context) => WithdrawalScreen(
+          isUserSubscribedToDirectDebit: isUserSubscribedToDirectDebit,
+        ),
       ),
     );
   }

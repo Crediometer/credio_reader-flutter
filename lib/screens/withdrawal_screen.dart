@@ -4,7 +4,12 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../components/app_selection_sheet.dart';
 
 class WithdrawalScreen extends StatelessWidget {
-  WithdrawalScreen({Key? key}) : super(key: key);
+  final bool isUserSubscribedToDirectDebit;
+
+  WithdrawalScreen({
+    Key? key,
+    required this.isUserSubscribedToDirectDebit,
+  }) : super(key: key);
 
   final list = [
     "Universal",
@@ -77,7 +82,18 @@ class WithdrawalScreen extends StatelessWidget {
                   const SizedBox(height: 78),
                   const Padding(
                     padding: EdgeInsets.symmetric(horizontal: 41.0),
-                    child: TextField(),
+                    child: TextField(
+                      textAlign: TextAlign.center,
+                      keyboardType: TextInputType.number,
+                      style: TextStyle(fontSize: 24),
+                      decoration: InputDecoration(
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Color(0xff5365BE),
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
                   const SizedBox(height: 195),
                   Padding(

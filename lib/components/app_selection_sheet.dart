@@ -1,6 +1,5 @@
+import 'package:credio_reader/screens/pin_input_screen.dart';
 import 'package:flutter/material.dart';
-
-import '../screens/pin_screen.dart';
 
 showSelectionSheet(
   BuildContext context, {
@@ -83,7 +82,9 @@ class SelectionBottomSheet<T> extends StatelessWidget {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => const PinScreen(),
+                                  builder: (context) => const PinInputScreen(
+                                    isUserSubscribedToDirectDebit: true,
+                                  ),
                                 ),
                               );
                             },
