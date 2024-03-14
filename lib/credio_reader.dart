@@ -1,31 +1,67 @@
 library credio_reader;
 
+import 'package:credio_reader/configuration/configuration.dart';
 import 'package:credio_reader/screens/withdrawal_screen.dart';
+import 'package:credio_reader/state/reader_state.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-class CredioReader {
-  final bool isUserSubscribedToDirectDebit;
+// class CredioReader {
 
-  CredioReader({
-    required this.isUserSubscribedToDirectDebit,
-  });
+//   CredioReader({
+//   });
 
-  // Future<String?> getPlatformVersion() {
-  //   return CredioReaderPlatform.instance.getPlatformVersion();
-  // }
+// Future<void> initiateWithdrawal(
+//   BuildContext context,
+// ) async {
+//   Navigator.push(
+//     context,
+//     MaterialPageRoute(
+//       builder: (context) => WithdrawalScreen(
+//
+//       ),
+//     ),
+//   );
+//   }
+// }
 
-  ///Ensure that the context passed to initiateWithdrawal is a descendant of a MaterialApp or CupertinoApp widget.
-  ///This usually means passing the context from a widget that is part of the app's widget tree
+class CredioReaderInitiator extends StatefulWidget {
+  final CredioConfig credioConfig;
+
+  const CredioReaderInitiator(this.credioConfig, {super.key});
+
   Future<void> initiateWithdrawal(
     BuildContext context,
   ) async {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => WithdrawalScreen(
-          isUserSubscribedToDirectDebit: isUserSubscribedToDirectDebit,
-        ),
+        builder: (context) => WithdrawalScreen(),
       ),
+    );
+  }
+
+  @override
+  State<CredioReaderInitiator> createState() => _CredioReaderInitiatorState();
+}
+
+class _CredioReaderInitiatorState extends State<CredioReaderInitiator> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => ReaderStateProvider.instance(widget.credioConfig),
+      lazy: true,
+      child: const Placeholder(),
     );
   }
 }

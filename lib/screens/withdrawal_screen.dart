@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_svg/svg.dart';
 
 import '../components/app_selection_sheet.dart';
 
 class WithdrawalScreen extends StatelessWidget {
-  final bool isUserSubscribedToDirectDebit;
-
   WithdrawalScreen({
     Key? key,
-    required this.isUserSubscribedToDirectDebit,
   }) : super(key: key);
 
   final list = [
@@ -23,125 +21,135 @@ class WithdrawalScreen extends StatelessWidget {
     final size = MediaQuery.sizeOf(context);
     return Scaffold(
       extendBodyBehindAppBar: true,
-      body: Stack(
-        children: [
-          Positioned(
-            left: size.width * 0.5,
-            top: -size.height * 0.12,
-            child: SvgPicture.asset(
-              'packages/credio_reader/images/circle_bckg.svg',
-              // height: 50,
-            ),
-          ),
-          Positioned(
-            top: 24,
-            left: 0,
-            right: 0,
-            child: SafeArea(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const SizedBox(height: 8),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 31.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        InkWell(
-                          onTap: () {
-                            Navigator.pop(context);
-                          },
-                          child: const Icon(Icons.arrow_back),
-                        ),
-                        const Spacer(),
-                        const Text(
-                          'Withdrawal',
-                          style: TextStyle(fontSize: 24),
-                        ),
-                        const Spacer(),
-                      ],
-                    ),
+                  InkWell(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Icon(Icons.arrow_back),
                   ),
-                  const SizedBox(height: 173),
+                  const Spacer(),
                   const Text(
-                    'Enter amount',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Color(0xffB11226),
-                    ),
+                    'Withdrawal',
+                    style: TextStyle(fontSize: 24),
                   ),
-                  const SizedBox(height: 5),
-                  const Text(
-                    'NGN',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.black,
-                    ),
-                  ),
-                  const SizedBox(height: 78),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 41.0),
-                    child: TextField(
-                      textAlign: TextAlign.center,
-                      keyboardType: TextInputType.number,
-                      style: TextStyle(fontSize: 24),
-                      decoration: InputDecoration(
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Color(0xff5365BE),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 195),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 31.0),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        showSelectionSheet(
-                          context,
-                          data: list
-                              .map(
-                                (e) => SelectionData<int>(
-                                  selection: list.indexOf(e),
-                                  title: e,
-                                ),
-                              )
-                              .toList(),
-                          onSelect: (SelectionData s) {
-                            // Navigator.push(
-                            //   context,
-                            //   MaterialPageRoute(
-                            //     builder: (context) => const PinScreen(),
-                            //   ),
-                            // );
-                          },
-                          title: "Select Account Type",
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xffB11226),
-                        fixedSize: const Size(double.infinity, 53.0),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                      ),
-                      child: const Text(
-                        'Continue',
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ),
+                  const Spacer(),
                 ],
               ),
             ),
-          ),
-        ],
+            const SizedBox(height: 30),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 35.0),
+              child: Text(
+                'How much do you want to withdraw',
+                style: TextStyle(
+                  fontSize: 18,
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 35.0),
+              child: TextFormField(
+                cursorColor: const Color(0xFF656F78),
+                keyboardType: TextInputType.number,
+                inputFormatters: [
+                  FilteringTextInputFormatter.digitsOnly,
+                  // AmountFormatter()
+                ],
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
+                ),
+                decoration: InputDecoration(
+                  hintText: 'Amount',
+                  hintStyle: const TextStyle(
+                    fontSize: 12.0,
+                    color: Color(0xFF737373),
+                  ),
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+                  suffixIcon: Padding(
+                    padding: const EdgeInsets.only(right: 12.0),
+                    child: SvgPicture.asset(
+                        'packages/credio_reader/images/naira.svg'),
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: const BorderRadius.all(Radius.circular(3.0)),
+                    borderSide: BorderSide(
+                      color: Colors.black.withOpacity(0.4),
+                      width: 1.0,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: const BorderRadius.all(Radius.circular(3.0)),
+                    borderSide: BorderSide(
+                      color: const Color(0xFF333333).withOpacity(0.2),
+                      width: 1.0,
+                    ),
+                  ),
+                  errorBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Color(0xffD11C1C),
+                      width: 1,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 195),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 31.0),
+              child: ElevatedButton(
+                onPressed: () {
+                  showSelectionSheet(
+                    context,
+                    data: list
+                        .map(
+                          (e) => SelectionData<int>(
+                            selection: list.indexOf(e),
+                            title: e,
+                          ),
+                        )
+                        .toList(),
+                    onSelect: (SelectionData s) {
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder: (context) => const PinScreen(),
+                      //   ),
+                      // );
+                    },
+                    title: "Select Account Type",
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xffB11226),
+                  fixedSize: const Size(double.infinity, 53.0),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                ),
+                child: const Text(
+                  'Continue',
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

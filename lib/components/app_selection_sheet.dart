@@ -83,8 +83,8 @@ class SelectionBottomSheet<T> extends StatelessWidget {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => const PinInputScreen(
-                                    isUserSubscribedToDirectDebit: true,
-                                  ),
+                                      // isUserSubscribedToDirectDebit: true,
+                                      ),
                                 ),
                               );
                             },
