@@ -48,25 +48,25 @@ class SelectionBottomSheet<T> extends StatelessWidget {
             return Container(
               decoration: const BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.vertical(
-                  top: Radius.circular(
-                    40,
-                  ),
-                ),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const SizedBox(height: 34),
-                  Text(
-                    title ?? "",
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      color: Color(0xff058B42),
+                  const SizedBox(height: 15),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 15.0,
+                      horizontal: 15.0,
+                    ),
+                    child: Text(
+                      title ?? "",
+                      // textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 20,
+                        color: Color(0xff058B42),
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 15),
                   const Divider(color: Color(0xff939393), height: 2),
                   Expanded(
                     child: Container(
@@ -79,14 +79,6 @@ class SelectionBottomSheet<T> extends StatelessWidget {
                             onTap: () {
                               onSelect(item as T);
                               Navigator.of(context).pop();
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const PinInputScreen(
-                                      // isUserSubscribedToDirectDebit: true,
-                                      ),
-                                ),
-                              );
                             },
                             leading: item.data != null ? Icon(item.data) : null,
                             dense: true,

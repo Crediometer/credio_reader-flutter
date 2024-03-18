@@ -1,18 +1,24 @@
 import 'dart:async';
 import 'dart:developer';
 
+import 'package:credio_reader/components/app_selection_sheet.dart';
+import 'package:credio_reader/components/merchant_transaction_receipt.dart';
 import 'package:credio_reader/configuration/configuration.dart';
+import 'package:credio_reader/screens/pin_input_screen.dart';
+import 'package:credio_reader/utils/helper.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_plugin_qpos/QPOSModel.dart';
 import 'package:flutter_plugin_qpos/flutter_plugin_qpos.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../utils/utils.dart';
 
 enum PosConnectionState {
   connected,
   notConnected,
-  swipeCard,
 }
 
 class ReaderStateProvider extends ChangeNotifier {
@@ -28,42 +34,27 @@ class ReaderStateProvider extends ChangeNotifier {
 
   static ReaderStateProvider? _instance;
 
-  static ReaderStateProvider instance(CredioConfig credioConfig) {
+  static ReaderStateProvider instance({CredioConfig? credioConfig}) {
     _instance ??= ReaderStateProvider._();
-    _instance!.configurations = credioConfig;
+    if (credioConfig != null) _instance!.configurations = credioConfig;
     return _instance!;
   }
 
   BuildContext? pinContext;
 
-  final communicationMode = const [
-    'AUDIO',
-    'BLUETOOTH_VER2',
-    'UART',
-    'UART_K7',
-    'BLUETOOTH_2Mode',
-    'USB',
-    'BLUETOOTH_4Mode',
-    'UART_GOOD',
-    'USB_OTG',
-    'USB_OTG_CDC_ACM',
-    'BLUETOOTH',
-    'BLUETOOTH_BLE',
-    'UNKNOW',
-  ];
+  final communicationMode = "BLUETOOTH";
   int accountType = 0;
 
-  Stopwatch stopwatch = Stopwatch();
-
-  // List<Reader>? readers;
   String? lastMessage;
-
-  // CardExchangeResponse? _cardKeyExchange;
 
   ValueNotifier<String> logs = ValueNotifier("");
   static final RegExp regexPattern = RegExp(r'\D');
+  TextEditingController amountCredio = new TextEditingController();
 
-  PosConnectionState posState = PosConnectionState.notConnected;
+  TextEditingController _pinController = new TextEditingController();
+  TextEditingController get pinController => _pinController;
+  ValueNotifier<PosConnectionState> posState =
+      ValueNotifier(PosConnectionState.notConnected);
 
   String bankNibbs = "";
 
@@ -85,9 +76,6 @@ class ReaderStateProvider extends ChangeNotifier {
 
   void initState({
     required BuildContext buildContext,
-    required String authorNumber,
-    required dynamic profile,
-    String? operatorNumber,
   }) {
     if (!initStateCalled) {
       initStateCalled = true;
@@ -95,12 +83,10 @@ class ReaderStateProvider extends ChangeNotifier {
       initPlatformState();
       _subscription =
           _flutterPluginQpos.onPosListenerCalled!.listen((QPOSModel datas) {
-        // parasListener(
-        //   datas: datas,
-        //   thisContext: buildContext,
-        //   authorNumber: authorNumber,
-        //   operatorNumber: operatorNumber,
-        // );
+        parasListener(
+          datas: datas,
+          thisContext: buildContext,
+        );
         notifyListeners();
       });
     }
@@ -113,11 +99,6 @@ class ReaderStateProvider extends ChangeNotifier {
       _subscription!.cancel();
     }
   }
-
-  // Future<bool> checkPermission() async {
-  //   return (await Permission.bluetooth.request().isGranted &&
-  //       await Permission.location.request().isGranted);
-  // }
 
   Future<void> initPlatformState() async {
     String platformVersion;
@@ -144,44 +125,6 @@ class ReaderStateProvider extends ChangeNotifier {
     await _flutterPluginQpos.disconnectBT();
   }
 
-  // Future connectToReader(
-  //   UserDetails naira,
-  //   BuildContext context,
-  //   String authorNumber,
-  //   Profile profile,
-  // ) async {
-  //   scanFinish = -1;
-  //   items = null;
-  //   getListSection();
-  //   readers = naira.message?.profile?.reader ?? [];
-  //
-  //   if (!readers!.isEmpty) {
-  //     showErrorAlert(context, message: noReader);
-  //   } else {
-  //     logs.value = "Activated Readers: \n";
-  //     readers!.map((e) => logs.value = "${logs.value}${e.uuid}\n");
-  //     selectDevice(
-  //       () {
-  //         showDialog(
-  //           context: context,
-  //           barrierDismissible: false,
-  //           builder: (context) {
-  //             this.context = context;
-  //             return CredioDialogScaffold(
-  //               showClose: true,
-  //               padded: true,
-  //               child: DialogMessage(
-  //                 messageType: MessageType.Pending,
-  //                 message: "Getting Available Reader",
-  //               ),
-  //             );
-  //           },
-  //         );
-  //       },
-  //     );
-  //   }
-  // }
-
   sendPin(BuildContext context, String pin) async {
     pinContext = context;
     _flutterPluginQpos.sendPin(pin);
@@ -199,12 +142,10 @@ class ReaderStateProvider extends ChangeNotifier {
   void parasListener({
     required QPOSModel datas,
     required BuildContext thisContext,
-    required String authorNumber,
-    String? operatorNumber,
     // Profile profile,
   }) async {
     String? method = datas.method;
-    print("dataas --- ${datas.toJson()}");
+    log("dataas --- ${datas.toJson()}");
     List<String> paras = List.empty();
 
     String? parameters = datas.parameters;
@@ -215,30 +156,63 @@ class ReaderStateProvider extends ChangeNotifier {
     switch (method) {
       case 'onRequestTransactionResult':
         log("yeah haaaaa");
+        final Map<String, dynamic> doRoute = {
+          "rrn": "242153479142",
+          "onlinePin": false,
+          "merchantName": "ITEX INTEGRATED SERVIC",
+          "merchantAddress": "LA           LANG",
+          "merchantId": "FBP204010449858",
+          "terminalId": "207003DW",
+          "STAN": "531056",
+          "transactionActivityTime": "1128093015",
+          "transactionTime": "093015",
+          "transactionDate": "1128",
+          "responseTime": "2022-11-28T08:30:16.295Z",
+          "responseCode": "00",
+          "merchantCategoryCode": "5050",
+          "handlerName": "NIBSS POSVAS",
+          "MTI": "0210",
+          "maskedPan": "506110XXXXXXXXX9519",
+          "processingCode": "001000",
+          "amount": 1,
+          "currencyCode": "566",
+          "messageReason": "Approved",
+          "originalDataElements": null,
+          "customerRef":
+              "~0014A0000003710001011000802480000204E8000309Verve CPA09083D94304310067.9.160508000032860602CT040424120803S90",
+          "script":
+              "9F26087A41030E8D1A02769F2701809F10200FA501A202F8000000000000000000000F0F08010000000000000000000000009F37041B0413949F360200BD950500802480009A032211169C01009F02060000000000015F2A0200566820258009F1A02005669F3303E0E8F09F3501229F34034203009F1E043D9430438407A0000003710001",
+          "aiic": "00000506110",
+          "ficc": "00000639138",
+          "authCode": "342151"
+        };
+        showCupertinoModalBottomSheet(
+          context: pinContext!,
+          isDismissible: false,
+          backgroundColor: Colors.white,
+          enableDrag: false,
+          builder: (ctx) {
+            return MerchantTransactionReceipt(
+              maskedPan: doRoute["maskedPan"],
+              cardType: 'Debit Card',
+              creditAccountName: doRoute["merchantName"],
+              creditAccountNumber: doRoute["customerRef"],
+              terminalId: doRoute["terminalId"],
+              authCode: doRoute["authCode"],
+              responseCode: doRoute["responseCode"],
+              stan: doRoute["STAN"],
+              rrn: doRoute['rrn'],
+              narration: doRoute['messageReason'],
+              amount: doRoute["amount"],
+              transactionTime: doRoute["responseTime"],
+            );
+          },
+        );
         // result from Transactions
         if ((parameters ?? '').contains('Approved')) {
           log("yeah Approved");
-          // pushNewScreen(
-          //   _navigationService.navigatorKey.currentContext!,
-          //   screen: Recipt({}),
-          // );
         } else if (parameters?.toLowerCase() == 'cancel' ||
             parameters?.toLowerCase() == 'terminated') {
-          // final snackBar = SnackBar(
-          //   /// need to set following properties for best effect of awesome_snackbar_content
-          //   elevation: 0,
-          //   behavior: SnackBarBehavior.floating,
-          //   backgroundColor: Colors.transparent,
-          //   content: AwesomeSnackbarContent(
-          //     title: 'On Snap!',
-          //     message: 'Transaction Cancelled!',
-          //     contentType: ContentType.failure,
-          //   ),
-          // );
-          //
-          // ScaffoldMessenger.of(_navigationService.navigatorKey.currentContext!)
-          //   ..hideCurrentSnackBar()
-          //   ..showSnackBar(snackBar);
         } else {}
         display = parameters!;
         notifyListeners();
@@ -247,23 +221,6 @@ class ReaderStateProvider extends ChangeNotifier {
         if (lastMessage?.toLowerCase() !=
             "Please insert/swipe/tap card!".toLowerCase()) {
           lastMessage = "Please insert/swipe/tap card!";
-          // final snackBar = SnackBar(
-          //   /// need to set following properties for best effect of awesome_snackbar_content
-          //   elevation: 0,
-          //   behavior: SnackBarBehavior.fixed,
-          //   backgroundColor: Colors.transparent,
-          //   content: AwesomeSnackbarContent(
-          //     title: 'Insert Card',
-          //     message: 'Please insert/swipe/tap card!',
-          //
-          //     /// change contentType to ContentType.success, ContentType.warning or ContentType.help for variants
-          //     contentType: ContentType.help,
-          //   ),
-          // );
-          //
-          // ScaffoldMessenger.of(_navigationService.navigatorKey.currentContext!)
-          //   ..hideCurrentSnackBar()
-          //   ..showSnackBar(snackBar);
         }
         break;
       case 'onRequestDisplay':
@@ -276,21 +233,6 @@ class ReaderStateProvider extends ChangeNotifier {
           if (!display.toLowerCase().contains("approved")) {
             if (lastMessage?.toLowerCase() != display.toLowerCase()) {
               lastMessage = display;
-              // final snackBar = SnackBar(
-              //   elevation: 0,
-              //   behavior: SnackBarBehavior.fixed,
-              //   backgroundColor: Colors.transparent,
-              //   content: AwesomeSnackbarContent(
-              //     title: 'Display Request',
-              //     message: display,
-              //     contentType: ContentType.help,
-              //   ),
-              // );
-              //
-              // ScaffoldMessenger.of(
-              //     _navigationService.navigatorKey.currentContext!)
-              //   ..hideCurrentSnackBar()
-              //   ..showSnackBar(snackBar);
             }
           }
         }
@@ -315,7 +257,14 @@ class ReaderStateProvider extends ChangeNotifier {
         display = "Please input pin on your app";
         log(display);
         notifyListeners();
-        Navigator.pop(context!);
+        // Navigator.pop(context!);
+        pinController.clear();
+        Navigator.push(
+          _configurations.locator!.currentContext!,
+          MaterialPageRoute(
+            builder: (ctx) => PinInputScreen(),
+          ),
+        );
         //TODO: navigate to pin page
         break;
       case 'onQposRequestPinResult':
@@ -327,7 +276,7 @@ class ReaderStateProvider extends ChangeNotifier {
         if ((parameters!.startsWith("MPOS") ||
                 parameters.startsWith("Credio")) &&
             !(items!.contains(parameters))) {
-          items!.add(parameters);
+          items!.add(parameters!);
           StringBuffer buffer = StringBuffer();
           for (int i = 0; i < items!.length; i++) {
             buffer.write(items![i]);
@@ -400,7 +349,7 @@ class ReaderStateProvider extends ChangeNotifier {
         break;
       case 'onRequestQposConnected':
         display = "device connected!";
-        // posState = PosConnectionState.Connected;
+        posState.value = PosConnectionState.connected;
         // readerConnectionState.value = true;
         // log("${_flutterPluginQpos.getQposId()}");
         // final CardHttpService _cardService = CardHttpService();
@@ -473,7 +422,7 @@ class ReaderStateProvider extends ChangeNotifier {
         break;
       case 'onRequestSetAmount':
         Map<String, String> params = <String, String>{};
-        // params['amount'] = "${(extractAmount(amountCredio.text) ?? 0) * 100}";
+        params['amount'] = "${(extractAmount(amountCredio.text) ?? 0) * 100}";
         params['cashbackAmount'] = "";
         params['currencyCode'] = "0566"; //"NGN"; //
         params['transactionType'] = "GOODS";
@@ -482,7 +431,10 @@ class ReaderStateProvider extends ChangeNotifier {
       case 'onReturnGetEMVListResult':
         break;
       case 'onRequestDeviceScanFinished':
-        // processItems(items, readers);
+        log("items   - --- ${items!.length}");
+        processItems(
+          items,
+        );
         break;
 
       //todo remove  pop
@@ -644,12 +596,15 @@ class ReaderStateProvider extends ChangeNotifier {
     }
   }
 
+  Future<bool> checkPermission() async {
+    return (await Permission.bluetooth.request().isGranted &&
+        await Permission.location.request().isGranted);
+  }
+
   void selectDevice(
     VoidCallback next,
   ) {
-    log("selectDevice ?? ${communicationMode[5]}");
-    stopwatch.start();
-    _flutterPluginQpos.init(communicationMode[10]);
+    _flutterPluginQpos.init(communicationMode);
     _flutterPluginQpos.scanQPos2Mode(2);
     next();
   }
@@ -697,75 +652,33 @@ class ReaderStateProvider extends ChangeNotifier {
 
   Future<void> processItems(
     List<String>? items,
-    // List<Reader?>? readers,
   ) async {
     log("items   - --- ${items!.map((e) => e)}");
-
-    StringBuffer logBuffer = StringBuffer();
-    logBuffer.writeln("${logs.value}\nScan Completed \n");
-    logBuffer.writeln("${logs.value}\All Bluetooths \n");
 
     Navigator.pop(context!);
 
     try {
-      Map<String, String> itemUuidMap = Map.fromEntries(
-        items.map((item) {
+      showSelectionSheet(
+        context!,
+        onSelect: (data) async {
+          await connectToDevice((data.selection)!);
+        },
+        title: "Select device",
+        data: items.map((item) {
           var name = item.split("//")[0].replaceAll(regexPattern, '');
-          return MapEntry(name, item);
-        }),
+
+          return SelectionData(
+            selection: item,
+            title: name,
+          );
+        }).toList(),
       );
-
-      // List<Reader?> activatedReaders = [];
-
-      // readers!.forEach((item1) {
-      // var last10Characters1 = item1!.uuid!.substring(item1.uuid!.length - 10);
-      // var matchingItem = itemUuidMap[last10Characters1];
-
-      // logBuffer.writeln(
-      //   "matchingItem - $matchingItem, $itemUuidMap -- $last10Characters1",
-      // );
-
-      // if (matchingItem != null) {
-      // activatedReaders.add(
-      //   Reader(
-      //     uuid: matchingItem,
-      //     readerName: item1.readerName,
-      //     phoneNumber: item1.phoneNumber,
-      //     terminalId: item1.terminalId,
-      //     // other properties from item1 can be copied here
-      //   ),
-      // );
-      // } else {
-      // logBuffer.writeln(
-      //   "${logs.value}\n No matching Reader? $last10Characters1",
-      // );
-      // }
-      // });
-      // if (activatedReaders.where((e) => e != null).isNotEmpty) {
-      // showSelectionSheet(
-      //   _navigationService.navigatorKey.currentContext!,
-      //   onSelect: (data) async {
-      //     await connectToDevice((data.selection as Reader).uuid!);
-      //   },
-      //   title: "Select device",
-      //   data: activatedReaders.where((e) => e != null).map((e) {
-      //     return SelectionData<Reader>(
-      //       selection: e!,
-      //       title: e.readerName,
-      //     );
-      //   }).toList(),
-      // );
-      // } else {
-      //   log("No Readers.... ");
-      // }
     } catch (e) {
       log("an error occurred -- $e");
     }
 
     scanFinish = 1;
-    logs.value = logBuffer.toString();
     notifyListeners();
-    stopwatch.stop();
   }
 
   Widget? getListSection() {
@@ -783,10 +696,8 @@ class ReaderStateProvider extends ChangeNotifier {
           separatorBuilder: (context, index) =>
               Container(height: 1, color: Colors.black),
           shrinkWrap: true,
-          //解决无限高度问题
           physics: const NeverScrollableScrollPhysics(),
           padding: const EdgeInsets.all(5.0),
-
           itemCount: items == null ? 0 : items!.length,
           itemBuilder: (BuildContext context, int index) {
             return _getListDate(context, index);

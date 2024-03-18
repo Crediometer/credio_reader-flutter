@@ -1,10 +1,18 @@
-import 'dart:async';
-
 import 'package:credio_reader/configuration/configuration.dart';
 import 'package:credio_reader/credio_reader.dart';
+import 'package:credio_reader_example/nav.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+
+final GetIt locator = GetIt.instance;
+
+void setupLocator() {
+  locator.registerLazySingleton(() => NavigationService());
+}
 
 void main() {
+  setupLocator();
+
   runApp(const MyApp());
 }
 
@@ -16,20 +24,15 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final _credioReaderPlugin = CredioReaderInitiator(
-    CredioConfig(''),
-  );
-
+  late final CredioConfig _config;
+  final apiKey = "apiKey";
   @override
   void initState() {
     super.initState();
-  }
-
-  Future<void> initiateWithdrawal(BuildContext context) async {
-    try {
-      await _credioReaderPlugin.initiateWithdrawal(context);
-    } catch (e) {
-      print('Error occurred while initiating withdrawal: $e');
+    _config = CredioConfig(apiKey,
+        directDebit: false, terminalId: "2070FLRX", companyColor: Colors.green);
+    if (mounted) {
+      setState(() {});
     }
   }
 
@@ -37,6 +40,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(primarySwatch: Colors.red),
+      navigatorKey: locator<NavigationService>().navigatorKey,
       home: Scaffold(
         appBar: AppBar(
           title: const Text('Credio Reader example app'),
@@ -44,12 +48,8 @@ class _MyAppState extends State<MyApp> {
         body: Center(
           child: Builder(
             builder: (context) {
-              return ElevatedButton(
-                onPressed: () {
-                  initiateWithdrawal(context);
-                },
-                child: const Text('Initiate Withdrawal'),
-              );
+              _config.locator = locator<NavigationService>().navigatorKey;
+              return ReaderButton(_config);
             },
           ),
         ),

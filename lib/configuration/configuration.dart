@@ -2,15 +2,24 @@
 import 'dart:convert';
 import 'dart:ui';
 
+import 'package:flutter/material.dart';
+
 class CredioConfig {
   bool? directDebit;
   String? terminalId;
   String? companyLogo;
   Color? companyColor;
+  late GlobalKey<NavigatorState>? locator;
 
   late String apiKey;
 
-  CredioConfig(this.apiKey, {this.directDebit = false, this.terminalId});
+  CredioConfig(
+    this.apiKey, {
+    this.locator,
+    this.directDebit = false,
+    this.terminalId,
+    this.companyColor,
+  });
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -19,19 +28,4 @@ class CredioConfig {
       'apiKey': apiKey,
     };
   }
-
-  factory CredioConfig.fromMap(Map<String, dynamic> map) {
-    return CredioConfig(
-      map['apiKey'] as String,
-      directDebit:
-          map['directDebit'] != null ? map['directDebit'] as bool : null,
-      terminalId:
-          map['terminalId'] != null ? map['terminalId'] as String : null,
-    );
-  }
-
-  String toJson() => json.encode(toMap());
-
-  factory CredioConfig.fromJson(String source) =>
-      CredioConfig.fromMap(json.decode(source) as Map<String, dynamic>);
 }
