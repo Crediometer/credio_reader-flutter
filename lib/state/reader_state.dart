@@ -6,7 +6,6 @@ import 'package:credio_reader/components/merchant_transaction_receipt.dart';
 import 'package:credio_reader/configuration/configuration.dart';
 import 'package:credio_reader/screens/pin_input_screen.dart';
 import 'package:credio_reader/utils/helper.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_plugin_qpos/QPOSModel.dart';
@@ -49,9 +48,9 @@ class ReaderStateProvider extends ChangeNotifier {
 
   ValueNotifier<String> logs = ValueNotifier("");
   static final RegExp regexPattern = RegExp(r'\D');
-  TextEditingController amountCredio = new TextEditingController();
+  TextEditingController amountCredio = TextEditingController();
 
-  TextEditingController _pinController = new TextEditingController();
+  final TextEditingController _pinController = TextEditingController();
   TextEditingController get pinController => _pinController;
   ValueNotifier<PosConnectionState> posState =
       ValueNotifier(PosConnectionState.notConnected);
@@ -60,7 +59,7 @@ class ReaderStateProvider extends ChangeNotifier {
 
   BuildContext? context;
 
-  final FlutterPluginQpos _flutterPluginQpos = FlutterPluginQpos();
+  final FlutterPluginQpos _flutterPluginQPos = FlutterPluginQpos();
 
   String? _mAddress;
 
@@ -71,7 +70,7 @@ class ReaderStateProvider extends ChangeNotifier {
   var scanFinish = 0;
   bool initStateCalled = false;
 
-  FlutterPluginQpos get qPos => _flutterPluginQpos;
+  FlutterPluginQpos get qPos => _flutterPluginQPos;
   DateTime today = DateTime.now();
 
   void initState({
@@ -82,9 +81,9 @@ class ReaderStateProvider extends ChangeNotifier {
 
       initPlatformState();
       _subscription =
-          _flutterPluginQpos.onPosListenerCalled!.listen((QPOSModel datas) {
+          _flutterPluginQPos.onPosListenerCalled!.listen((QPOSModel data) {
         parasListener(
-          datas: datas,
+          datas: data,
           thisContext: buildContext,
         );
         notifyListeners();
@@ -104,7 +103,7 @@ class ReaderStateProvider extends ChangeNotifier {
     String platformVersion;
 
     try {
-      platformVersion = (await _flutterPluginQpos.posSdkVersion)!;
+      platformVersion = (await _flutterPluginQPos.posSdkVersion)!;
     } on PlatformException {
       platformVersion = 'Failed to get platform version.';
     }
@@ -118,25 +117,25 @@ class ReaderStateProvider extends ChangeNotifier {
     scanFinish = 0;
     items = null;
     notifyListeners();
-    await _flutterPluginQpos.connectBluetoothDevice(addrs[1]);
+    await _flutterPluginQPos.connectBluetoothDevice(addrs[1]);
   }
 
   Future<void> disconnectToDevice() async {
-    await _flutterPluginQpos.disconnectBT();
+    await _flutterPluginQPos.disconnectBT();
   }
 
   sendPin(BuildContext context, String pin) async {
     pinContext = context;
-    _flutterPluginQpos.sendPin(pin);
+    _flutterPluginQPos.sendPin(pin);
   }
 
   void startDoTrade() {
-    _flutterPluginQpos.setFormatId(FormatID.DUKPT);
-    _flutterPluginQpos
+    _flutterPluginQPos.setFormatId(FormatID.DUKPT);
+    _flutterPluginQPos
         .setCardTradeMode(CardTradeMode.SWIPE_TAP_INSERT_CARD_NOTUP);
 
-    _flutterPluginQpos.setDoTradeMode(DoTradeMode.CHECK_CARD_NO_IPNUT_PIN);
-    _flutterPluginQpos.doTrade(0);
+    _flutterPluginQPos.setDoTradeMode(DoTradeMode.CHECK_CARD_NO_IPNUT_PIN);
+    _flutterPluginQPos.doTrade(0);
   }
 
   void parasListener({
@@ -174,7 +173,7 @@ class ReaderStateProvider extends ChangeNotifier {
           "MTI": "0210",
           "maskedPan": "506110XXXXXXXXX9519",
           "processingCode": "001000",
-          "amount": 1,
+          "amount": 1000,
           "currencyCode": "566",
           "messageReason": "Approved",
           "originalDataElements": null,
@@ -249,7 +248,7 @@ class ReaderStateProvider extends ChangeNotifier {
             "${today.year.toString()}${today.month.toString().padLeft(2, '0')}${today.day.toString().padLeft(2, '0')}${today.hour.toString().padLeft(2, '0')}${today.minute.toString().padLeft(2, '0')}${today.second.toString().padLeft(2, '0')}";
         log('Date Slug -- $dateSlug');
 
-        _flutterPluginQpos.sendTime(
+        _flutterPluginQPos.sendTime(
           dateSlug,
         );
         break;
@@ -262,7 +261,7 @@ class ReaderStateProvider extends ChangeNotifier {
         Navigator.push(
           _configurations.locator!.currentContext!,
           MaterialPageRoute(
-            builder: (ctx) => PinInputScreen(),
+            builder: (ctx) => const PinInputScreen(),
           ),
         );
         //TODO: navigate to pin page
@@ -276,7 +275,7 @@ class ReaderStateProvider extends ChangeNotifier {
         if ((parameters!.startsWith("MPOS") ||
                 parameters.startsWith("Credio")) &&
             !(items!.contains(parameters))) {
-          items!.add(parameters!);
+          items!.add(parameters);
           StringBuffer buffer = StringBuffer();
           for (int i = 0; i < items!.length; i++) {
             buffer.write(items![i]);
@@ -290,11 +289,11 @@ class ReaderStateProvider extends ChangeNotifier {
         print("oNError =-- $paras");
         break;
       case 'onDoTradeResult':
-        log("onDoTradeResult... ${paras}");
+        log("onDoTradeResult... $paras");
         log("something is wrong here????");
         if (Utils.equals(paras[0], "ICC")) {
           log("something is wrong here???? 4444");
-          _flutterPluginQpos.doEmvApp("START");
+          _flutterPluginQPos.doEmvApp("START");
         }
 
         if (Utils.equals(paras[0], "NFC_ONLINE") ||
@@ -345,7 +344,7 @@ class ReaderStateProvider extends ChangeNotifier {
         log("card exits ${datas.toJson()}");
         break;
       case 'onRequestSelectEmvApp':
-        _flutterPluginQpos.selectEmvApp(1);
+        _flutterPluginQPos.selectEmvApp(1);
         break;
       case 'onRequestQposConnected':
         display = "device connected!";
@@ -391,7 +390,7 @@ class ReaderStateProvider extends ChangeNotifier {
       case 'onUpdatePosFirmwareResult':
         break;
       case 'onUpdatePosFirmwareProcessChanged':
-        print('onUpdatePosFirmwareProcessChanged${parameters}');
+        print('onUpdatePosFirmwareProcessChanged$parameters');
 
         print('onUpdatePosFirmwareProcessChanged${double.parse(parameters!)}');
 
@@ -426,7 +425,7 @@ class ReaderStateProvider extends ChangeNotifier {
         params['cashbackAmount'] = "";
         params['currencyCode'] = "0566"; //"NGN"; //
         params['transactionType'] = "GOODS";
-        _flutterPluginQpos.setAmount(params);
+        _flutterPluginQPos.setAmount(params);
         break;
       case 'onReturnGetEMVListResult':
         break;
@@ -455,7 +454,7 @@ class ReaderStateProvider extends ChangeNotifier {
 
         break;
       case 'onRequestOnlineProcess':
-        _flutterPluginQpos.sendOnlineProcessResult("8A023030");
+        _flutterPluginQPos.sendOnlineProcessResult("8A023030");
 
         if (paras[0].trim().toUpperCase().contains("FALLBACK")) {
           break;
@@ -604,8 +603,8 @@ class ReaderStateProvider extends ChangeNotifier {
   void selectDevice(
     VoidCallback next,
   ) {
-    _flutterPluginQpos.init(communicationMode);
-    _flutterPluginQpos.scanQPos2Mode(2);
+    _flutterPluginQPos.init(communicationMode);
+    _flutterPluginQPos.scanQPos2Mode(2);
     next();
   }
 
@@ -642,7 +641,7 @@ class ReaderStateProvider extends ChangeNotifier {
       );
     } else {
       return TextButton(
-        onPressed: () => null, //connectToDevice(items![position]),
+        onPressed: () {}, //connectToDevice(items![position]),
         child: const Text(
           "No device available",
         ),

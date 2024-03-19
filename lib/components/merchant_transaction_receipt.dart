@@ -3,9 +3,10 @@ import 'package:credio_reader/components/receipts_clipper.dart';
 import 'package:credio_reader/components/typography/text_styles.dart';
 import 'package:credio_reader/utils/helper.dart';
 import 'package:flutter/material.dart';
-
 import 'package:flutter_svg/svg.dart';
 import 'package:screenshot/screenshot.dart';
+
+import '../consts/app_strings.dart';
 
 class MerchantTransactionReceipt extends StatefulWidget {
   // final Transaction receipt;
@@ -24,7 +25,7 @@ class MerchantTransactionReceipt extends StatefulWidget {
   final num? amount;
   final String? transactionTime;
 
-  MerchantTransactionReceipt({
+  const MerchantTransactionReceipt({
     Key? key,
     // required thiseceipt,
     // required this.profile,
@@ -63,7 +64,7 @@ class _MerchantTransactionReceiptState
   Widget build(BuildContext context) {
     final scaler = CredioScaleUtil(context);
     return Scaffold(
-        backgroundColor: Color(0xFFF6F6F6),
+        backgroundColor: const Color(0xFFF6F6F6),
         body: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -73,7 +74,7 @@ class _MerchantTransactionReceiptState
                 child: ClipPath(
                   clipper: ReceiptClipper(),
                   child: Container(
-                    margin: EdgeInsets.symmetric(
+                    margin: const EdgeInsets.symmetric(
                       horizontal: 18,
                       vertical: 23,
                     ),
@@ -89,13 +90,13 @@ class _MerchantTransactionReceiptState
                       children: [
                         transactionStatusImage(),
                         SizedBox(
-                          height: scaler.sizer.setHeight(10),
+                          height: scaler.sizer.setHeight(1.5),
                         ),
                         Text(
                           'Credio.',
                           textAlign: TextAlign.center,
                           style: CredioTextStyle.bold.copyWith(
-                            color: Color(0xFFB11226),
+                            color: const Color(0xFFB11226),
                             fontSize: 26,
                           ),
                         ),
@@ -103,7 +104,7 @@ class _MerchantTransactionReceiptState
                           formatCurrency("${(widget.amount ?? 0) / 100}"),
                           textAlign: TextAlign.center,
                           style: CredioTextStyle.semiBold.copyWith(
-                            color: Color(0xFF333333),
+                            color: const Color(0xFF333333),
                             fontSize: 29,
                           ),
                         ),
@@ -112,8 +113,8 @@ class _MerchantTransactionReceiptState
                           textAlign: TextAlign.center,
                           style: CredioTextStyle.medium.copyWith(
                             color: getSuccessful(widget.responseCode)
-                                ? Color(0xFF058B42)
-                                : Color(0xFFB11226),
+                                ? const Color(0xFF058B42)
+                                : const Color(0xFFB11226),
                             fontSize: 14,
                           ),
                         ),
@@ -124,18 +125,18 @@ class _MerchantTransactionReceiptState
                           ),
                           textAlign: TextAlign.center,
                           style: CredioTextStyle.medium.copyWith(
-                            color: Color(0xFF333333).withOpacity(0.6),
+                            color: const Color(0xFF333333).withOpacity(0.6),
                             fontSize: 13,
                           ),
                         ),
                         SizedBox(
-                          height: scaler.sizer.setHeight(25),
+                          height: scaler.sizer.setHeight(2),
                         ),
                         const TransactionSeparator(),
                         SizedBox(
-                          height: scaler.sizer.setHeight(12),
+                          height: scaler.sizer.setHeight(2),
                         ),
-                        TransactionSectionHeader("Card Holder"),
+                        const TransactionSectionHeader("Card Holder"),
                         TransactionRow(
                             title: 'Masked Pan',
                             description: widget.maskedPan ?? ""),
@@ -143,13 +144,13 @@ class _MerchantTransactionReceiptState
                             title: 'Card Type',
                             description: widget.cardType ?? ""),
                         SizedBox(
-                          height: scaler.sizer.setHeight(25),
+                          height: scaler.sizer.setHeight(2),
                         ),
-                        TransactionSeparator(),
+                        const TransactionSeparator(),
                         SizedBox(
-                          height: scaler.sizer.setHeight(12),
+                          height: scaler.sizer.setHeight(2),
                         ),
-                        TransactionSectionHeader("Recipient"),
+                        const TransactionSectionHeader("Recipient"),
                         const TransactionRow(
                             title: 'Account Number',
                             description: "0231973328" ?? ""),
@@ -160,13 +161,13 @@ class _MerchantTransactionReceiptState
                             title: 'Terminal Id',
                             description: widget.terminalId ?? ""),
                         SizedBox(
-                          height: scaler.sizer.setHeight(25),
+                          height: scaler.sizer.setHeight(2),
                         ),
                         const TransactionSeparator(),
                         SizedBox(
-                          height: scaler.sizer.setHeight(12),
+                          height: scaler.sizer.setHeight(2),
                         ),
-                        TransactionSectionHeader("Transaction Info"),
+                        const TransactionSectionHeader("Transaction Info"),
                         TransactionRow(
                             title: 'RRN', description: widget.rrn ?? ""),
                         TransactionRow(
@@ -181,7 +182,7 @@ class _MerchantTransactionReceiptState
                             title: 'Message',
                             description: widget.narration ?? ""),
                         SizedBox(
-                          height: scaler.sizer.setHeight(46),
+                          height: scaler.sizer.setHeight(2),
                         ),
                         const Divider(
                           color: Color(0xFFE8EAED),
@@ -222,8 +223,8 @@ class _MerchantTransactionReceiptState
                                   Text(
                                     'Share',
                                     style: CredioTextStyle.medium.copyWith(
-                                      color: Color(0xFF3D3D3D),
-                                      fontSize: 15,
+                                      color: const Color(0xFF3D3D3D),
+                                      fontSize: 18,
                                     ),
                                   ),
                                 ],
@@ -232,7 +233,7 @@ class _MerchantTransactionReceiptState
                           ),
                         ),
                         SizedBox(
-                          height: CredioScaleUtil(context).sizer.setHeight(20),
+                          height: CredioScaleUtil(context).sizer.setHeight(2),
                         ),
                       ],
                     ),
@@ -246,7 +247,7 @@ class _MerchantTransactionReceiptState
                     return child!;
                   },
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 18),
+                    padding: const EdgeInsets.symmetric(horizontal: 18),
                     child: ElevatedButton(
                       onPressed: () {},
                       style: ElevatedButton.styleFrom(
@@ -266,7 +267,7 @@ class _MerchantTransactionReceiptState
                     ),
                   )),
               SizedBox(
-                height: scaler.sizer.setHeight(25),
+                height: scaler.sizer.setHeight(5),
               )
             ],
           ),
@@ -279,11 +280,11 @@ class _MerchantTransactionReceiptState
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: getSuccessful(widget.responseCode)
-            ? Color(0xFF23A26D).withOpacity(0.12)
-            : Color(0xFFB11226).withOpacity(0.12),
+            ? const Color(0xFF23A26D).withOpacity(0.12)
+            : const Color(0xFFB11226).withOpacity(0.12),
       ),
-      child: SvgPicture.asset(
-        '${getSuccessful(widget.responseCode) ? 'assets/tick-circle.svg' : 'assets/failed.svg'}',
+      child: SvgPicture.string(
+        getSuccessful(widget.responseCode) ? tickCircle : failed,
       ),
     );
   }
@@ -302,7 +303,7 @@ class TransactionRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(bottom: 8, left: 24, right: 24),
+      padding: const EdgeInsets.only(bottom: 8, left: 24, right: 24),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -310,7 +311,7 @@ class TransactionRow extends StatelessWidget {
             child: Text(
               title,
               style: CredioTextStyle.regular.copyWith(
-                color: Color(0xFF121212).withOpacity(0.6),
+                color: const Color(0xFF121212).withOpacity(0.6),
                 fontSize: 14,
               ),
             ),
@@ -321,7 +322,7 @@ class TransactionRow extends StatelessWidget {
               description,
               overflow: TextOverflow.visible,
               style: CredioTextStyle.regular.copyWith(
-                color: Color(0xFF333333).withOpacity(0.6),
+                color: const Color(0xFF333333).withOpacity(0.6),
                 fontSize: 13,
               ),
             ),
@@ -335,12 +336,12 @@ class TransactionRow extends StatelessWidget {
 class TransactionSectionHeader extends StatelessWidget {
   final String title;
 
-  TransactionSectionHeader(this.title);
+  const TransactionSectionHeader(this.title, {super.key});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(left: 24),
+      padding: const EdgeInsets.only(left: 24),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -354,7 +355,7 @@ class TransactionSectionHeader extends StatelessWidget {
             ),
           ),
           SizedBox(
-            height: CredioScaleUtil(context).sizer.setHeight(10),
+            height: CredioScaleUtil(context).sizer.setHeight(2),
           ),
         ],
       ),
@@ -378,19 +379,22 @@ class TransactionSeparator extends StatelessWidget {
         final dashHeight = height;
         final dashCount = (boxWidth / (2 * dashWidth)).floor();
         return Flex(
-          children: List.generate(dashCount, (_) {
-            return SizedBox(
-              width: dashWidth,
-              height: dashHeight,
-              child: const DecoratedBox(
-                decoration: BoxDecoration(
-                  color: Color(0xFFDCDEE0),
-                ),
-              ),
-            );
-          }),
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           direction: Axis.horizontal,
+          children: List.generate(
+            dashCount,
+            (_) {
+              return SizedBox(
+                width: dashWidth,
+                height: dashHeight,
+                child: const DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: Color(0xFFDCDEE0),
+                  ),
+                ),
+              );
+            },
+          ),
         );
       },
     );

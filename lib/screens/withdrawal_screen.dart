@@ -6,6 +6,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
 import '../components/app_selection_sheet.dart';
+import '../consts/app_strings.dart';
 
 class WithdrawalScreen extends StatefulWidget {
   WithdrawalScreen({
@@ -73,6 +74,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 35.0),
                   child: TextFormField(
+                    autofocus: true,
                     controller: readerState.amountCredio,
                     cursorColor: const Color(0xFF656F78),
                     keyboardType: TextInputType.number,
@@ -94,8 +96,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                           horizontal: 8, vertical: 12),
                       suffixIcon: Padding(
                         padding: const EdgeInsets.only(right: 12.0),
-                        child: SvgPicture.asset(
-                            'packages/credio_reader/images/naira.svg'),
+                        child: SvgPicture.string(nairaSvg),
                       ),
                       border: OutlineInputBorder(
                         borderRadius:
@@ -127,6 +128,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 31.0),
                   child: ElevatedButton(
                     onPressed: () {
+                      FocusScope.of(context).unfocus();
                       showSelectionSheet(
                         context,
                         data: list

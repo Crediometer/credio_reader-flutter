@@ -64,6 +64,7 @@ class _PinInputScreenState extends State<PinInputScreen> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 48.0),
                     child: PinCodeTextField(
+                      autoFocus: true,
                       appContext: context,
                       onCompleted: (pin) => {readerState.sendPin(context, pin)},
                       length: 4,
@@ -87,9 +88,7 @@ class _PinInputScreenState extends State<PinInputScreen> {
                     ),
                   ),
                   SizedBox(
-                    height: CredioScaleUtil(context).sizer.setHeight(
-                          60,
-                        ),
+                    height: CredioScaleUtil(context).sizer.setHeight(50),
                   ),
                   // if (widget.isUserSubscribedToDirectDebit) ...[
                   Padding(
