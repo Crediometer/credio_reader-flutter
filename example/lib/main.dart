@@ -2,6 +2,7 @@ import 'package:credio_reader/configuration/configuration.dart';
 import 'package:credio_reader/credio_reader.dart';
 import 'package:credio_reader_example/nav.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
 
 final GetIt locator = GetIt.instance;
@@ -10,8 +11,9 @@ void setupLocator() {
   locator.registerLazySingleton(() => NavigationService());
 }
 
-void main() {
+void main() async {
   setupLocator();
+  await dotenv.load(fileName: ".env");
 
   runApp(const MyApp());
 }
@@ -33,7 +35,7 @@ class _MyAppState extends State<MyApp> {
     _config = CredioConfig(
       apiKey,
       '2070FLRX',
-      'https://webhook.site/3114981d-f591-41a0-91e7-7fb433c058b8',
+      dotenv.env['WEBHOOK_URL'],
       companyColor: Colors.green,
     );
     if (mounted) {
