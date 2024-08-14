@@ -73,12 +73,12 @@ IOS:
 In your `Info.plist`:
 
 ```xml
-	<key>NSBluetoothPeripheralUsageDescription</key>
-	<string>We need access to Bluetooth to connect to credio reader and provide you with pos payment functionality.</string>
-  <key>NSLocationWhenInUseUsageDescription</key>
-	<string>Credio would like to access your location to provide you with relevant and personalized services. Your location information will only be used while you are using the app.</string>
-	<key>NSBluetoothAlwaysUsageDescription</key>
-	<string>Credio requires Bluetooth access to securely connect to the Credio reader and facilitate seamless communication for payment processing and device configuration.</string>
+<key>NSBluetoothPeripheralUsageDescription</key>
+<string>We need access to Bluetooth to connect to credio reader and provide you with pos payment functionality.</string>
+<key>NSLocationWhenInUseUsageDescription</key>
+<string>Credio would like to access your location to provide you with relevant and personalized services. Your location information will only be used while you are using the app.</string>
+<key>NSBluetoothAlwaysUsageDescription</key>
+<string>Credio requires Bluetooth access to securely connect to the Credio reader and facilitate seamless communication for payment processing and device configuration.</string>
 ```
 
 
