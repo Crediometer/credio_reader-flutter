@@ -4,25 +4,20 @@ version: 0.0.1
 homepage:
 
 environment:
-  sdk: ">=3.0.0 <4.0.0"
-  flutter: ">=2.5.0"
+  sdk: ">=3.3.0 <4.0.0"
+  flutter: ">=2.15.0"
 
 dependencies:
   flutter:
     sdk: flutter
   flutter_svg: ^2.0.10+1
-  flutter_riverpod:
   pin_code_fields: ^8.0.1
-  permission_handler: 
-  screenshot:
-  modal_bottom_sheet:
-    git:
-      url: https://github.com/followthemoney1/modal_bottom_sheet.git
-      ref: main
-      path: modal_bottom_sheet
-  intl:
+  permission_handler: ^9.2.0
+  screenshot: ^2.3.0
+  modal_bottom_sheet: ^3.0.0
+  intl: ^0.19.0
   provider: ^6.1.2
-  flutter_plugin_qpos: 0.1.4+2-debug
+  flutter_plugin_qpos: ^0.1.4+2-debug
   dio: ^5.6.0
   flutter_dotenv: ^5.1.0
 

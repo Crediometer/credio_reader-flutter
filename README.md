@@ -27,7 +27,7 @@ Then, run `flutter pub get` in your terminal to install the package.
 
 
   *Example of `CredioConfig` class:
-  ```
+  ```dart
   final CredioConfig config = CredioConfig(
     '+2349091919191',
     '2070FLRX',
@@ -41,12 +41,74 @@ Then, run `flutter pub get` in your terminal to install the package.
   - `companyColor`(Color, optional):  Your company's primary color
 
   *Example of `CompanyData` class:
-  ```
+  ```dart
   CompanyData companyData = CompanyData(
     AssetImage('assets/company_logo.png'),
     Colors.blue,
   );
   ```
+
+## Permissions
+
+Before using the ReaderButton in your app, ensure that you have requested and received the necessary permissions. The Credio Reader plugin requires the following permissions:
+
+- Bluetooth
+- Internet
+- Location (for Android)
+
+ ### Platform Specific Setup
+  To ensure your app can request these permissions, add the following to your app's configuration files:
+
+Android:
+In your `AndroidManifest.xml`:
+```xml
+<uses-permission android:name="android.permission.INTERNET" />
+<uses-permission android:name="android.permission.BLUETOOTH" />
+<uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+<!-- For Android 12 and above -->
+<uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
+```
+
+IOS:
+In your `Info.plist`:
+
+```xml
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>We need access to Bluetooth to connect to credio reader and provide you with pos payment functionality.</string>
+  <key>NSLocationWhenInUseUsageDescription</key>
+	<string>Credio would like to access your location to provide you with relevant and personalized services. Your location information will only be used while you are using the app.</string>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>Credio requires Bluetooth access to securely connect to the Credio reader and facilitate seamless communication for payment processing and device configuration.</string>
+```
+
+
+You should request these permissions before initializing the ReaderButton. Here's a simple example of how to do this:
+```dart
+import 'package:permission_handler/permission_handler.dart';
+
+Future<bool> requestCredioPermissions() async {
+  Map<Permission, PermissionStatus> statuses = await [
+    Permission.bluetooth,
+    Permission.location,
+  ].request();
+
+  return statuses[Permission.bluetooth]!.isGranted && 
+         statuses[Permission.location]!.isGranted;
+}
+
+// Usage in your app
+void initializeCredioReader() async {
+  if (await requestCredioPermissions()) {
+    // Permissions granted, you can now use ReaderButton
+    // For example:
+    // ReaderButton(_config)
+  } else {
+    // Handle the case where permissions are not granted
+    // You might want to show a dialog explaining why the permissions are needed
+  }
+}
+```
+
 
 ## Usage
 
