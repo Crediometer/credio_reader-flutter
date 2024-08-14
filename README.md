@@ -31,7 +31,7 @@ Then, run `flutter pub get` in your terminal to install the package.
   final CredioConfig config = CredioConfig(
     '+2349091919191',
     '2070FLRX',
-    'https://webhook.site/3114981d-f591-41a0-91e7-7fb433c058b8',
+    'your_webhook_url',
     companyColor: Colors.green,
   );
   ```
