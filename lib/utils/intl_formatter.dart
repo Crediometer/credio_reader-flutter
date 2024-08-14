@@ -13,9 +13,8 @@ class AmountFormatter extends TextInputFormatter {
           composing: TextRange.empty,
         );
       }
-      final amount = newValue.text != null
-          ? newValue.text.replaceAll(RegExp(r'[^0-9\.]'), "")
-          : "";
+      final String amount;
+      amount = newValue.text.replaceAll(RegExp(r'[^0-9\.]'), "");
       final isValidNum = amount.isNotEmpty && int.tryParse(amount) != null;
       if (isValidNum) {
         final formattedText = formatCurrencyInput(amount);
@@ -28,7 +27,6 @@ class AmountFormatter extends TextInputFormatter {
         return newValue;
       }
     } catch (e) {
-      print(e);
       return oldValue;
     }
   }

@@ -151,11 +151,10 @@ class _MerchantTransactionReceiptState
                       ),
                       const TransactionSectionHeader("Recipient"),
                       const TransactionRow(
-                          title: 'Account Number',
-                          description: "0231973328" ?? ""),
+                          title: 'Account Number', description: "0231973328"),
                       const TransactionRow(
                           title: 'Merchant Name',
-                          description: "Rasheed Abefe Raji" ?? ""),
+                          description: "Rasheed Abefe Raji"),
                       TransactionRow(
                           title: 'Terminal Id',
                           description: widget.terminalId ?? ""),

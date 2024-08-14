@@ -10,7 +10,6 @@ import 'package:credio_reader/services/http.dart';
 import 'package:credio_reader/utils/helper.dart';
 import 'package:credio_reader/utils/modals.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_plugin_qpos/QPOSModel.dart';
 import 'package:flutter_plugin_qpos/flutter_plugin_qpos.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
@@ -63,8 +62,6 @@ class ReaderStateProvider extends ChangeNotifier {
 
   final FlutterPluginQpos _flutterPluginQPos = FlutterPluginQpos();
 
-  String? _mAddress;
-
   String display = "";
   StreamSubscription? _subscription;
   List<String>? items;
@@ -81,7 +78,6 @@ class ReaderStateProvider extends ChangeNotifier {
     if (!initStateCalled) {
       initStateCalled = true;
 
-      initPlatformState();
       _subscription =
           _flutterPluginQPos.onPosListenerCalled!.listen((QPOSModel data) {
         parasListener(
@@ -101,21 +97,8 @@ class ReaderStateProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> initPlatformState() async {
-    String platformVersion;
-
-    try {
-      platformVersion = (await _flutterPluginQPos.posSdkVersion)!;
-    } on PlatformException {
-      platformVersion = 'Failed to get platform version.';
-    }
-
-    notifyListeners();
-  }
-
   Future<void> connectToDevice(String item) async {
     List<String> addrs = item.split("//");
-    _mAddress = addrs[1];
     scanFinish = 0;
     items = null;
     notifyListeners();

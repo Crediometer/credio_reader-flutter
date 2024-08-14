@@ -36,7 +36,7 @@ String getAmountTransaction(String amount) {
 String formatDate(String date, {String? format}) {
   DateFormat formatter =
       format == null ? DateFormat("d-MM-yyyy") : DateFormat(format);
-  if (date == null || date.isEmpty) {
+  if (date.isEmpty) {
     return formatter.format(DateTime.now());
   }
   var datetime = DateTime.tryParse(date);
@@ -45,7 +45,7 @@ String formatDate(String date, {String? format}) {
   }
   return formatter.format(
     datetime.add(
-      Duration(
+      const Duration(
         hours: 1,
       ),
     ),
@@ -64,12 +64,12 @@ String formatCurrency(
     symbol: ignoreSymbol ? "" : "$symbol${spaceIcon ? " " : ""}",
     decimalDigits: 2,
   );
-  if (amount == null || amount.isEmpty || amount == "null") {
+  if (amount.isEmpty || amount == "null") {
     return "$symbol-.--";
   }
   amount = amount.replaceAll(RegExp(r'[^0-9\.]'), "");
   final amountDouble = double.tryParse(amount);
-  if (amount == null || amountDouble == null) {
+  if (amountDouble == null) {
     return amount;
   }
   if (amountDouble == 0) {
@@ -87,7 +87,7 @@ String formatCurrencyInput(String amount) {
   );
   amount = amount.replaceAll(RegExp(r'[^0-9\.]'), "");
   final amountDouble = double.tryParse(amount);
-  if (amount == null || amountDouble == null) {
+  if (amountDouble == null) {
     return "";
   }
   return formatter.format(amountDouble);
@@ -98,7 +98,6 @@ String parseError(
   String? defaultMessage, [
   bool ignore401 = false,
 ]) {
-  print("xxxx: $errorResponse");
   try {
     final fallbackMessage = defaultMessage != null && defaultMessage.isNotEmpty
         ? defaultMessage
@@ -106,19 +105,6 @@ String parseError(
     try {
       final int statusCode = errorResponse["statusCode"] ?? 400;
       final dynamic error = errorResponse["data"];
-
-      print("error: $error");
-
-      // if (statusCode == 503) {
-      //   if (error is String) {
-      //     final document = parse(error);
-      //     final titleElement = document.querySelector("title");
-      //     if (titleElement != null) {
-      //       return titleElement.text;
-      //     }
-      //     return 'Sorry, My request could not be resolved at this time, please retry';
-      //   }
-      // }
 
       if (error is Map) {
         if (error["message"] != null &&
@@ -133,7 +119,7 @@ String parseError(
         }
       }
       if (error is String) {
-        return error != null && error.isNotEmpty
+        return error.isNotEmpty
             ? _fallBackMessage(statusCode, error)
             : _fallBackMessage(statusCode, fallbackMessage);
       }
@@ -151,9 +137,9 @@ String? _parseErrorArray(Map error) {
   try {
     final data = Map<String, List>.from(error);
     List errorMessages = [];
-    data.keys.forEach((it) {
+    for (var it in data.keys) {
       errorMessages.addAll(data[it]!);
-    });
+    }
     return errorMessages.join(", ");
   } catch (_) {
     return null;

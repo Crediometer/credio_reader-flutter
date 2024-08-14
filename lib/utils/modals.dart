@@ -29,7 +29,7 @@ Future<T?> formSubmitDialog<T>({
     context: context,
     barrierDismissible: false,
     pageBuilder: (context, ____, _______) {
-      return WillPopScope(
+      return PopScope(
         child: ValueListenableBuilder(
           valueListenable: isResolved,
           builder: (context, FutureState val, _) {
@@ -82,7 +82,7 @@ Future<T?> formSubmitDialog<T>({
                         action: action ?? () {},
                       );
                     }
-                    WidgetsBinding.instance?.addPostFrameCallback(
+                    WidgetsBinding.instance.addPostFrameCallback(
                       (_) {
                         isResolved.value = FutureState.complete;
                       },
@@ -102,7 +102,7 @@ Future<T?> formSubmitDialog<T>({
             );
           },
         ),
-        onWillPop: () async => isResolved.value == FutureState.complete,
+        onPopInvoked: (value) async => isResolved.value == FutureState.complete,
       );
     },
   );
