@@ -1,6 +1,6 @@
 name: credio_reader
 description: A Flutter plugin designed to simplify the process of integrating a credio reader into your mobile application.
-version: 0.0.1
+version: 0.0.2
 homepage: https://crediometer.com
 
 environment:
@@ -19,7 +19,6 @@ dependencies:
   provider: ^6.1.2
   flutter_plugin_qpos: ^0.1.4+2-debug
   dio: ^5.6.0
-  flutter_dotenv: ^5.1.0
 
 dev_dependencies:
   flutter_test:
@@ -48,7 +47,5 @@ flutter:
         pluginClass: CredioReaderPlugin
 
   # To add assets to your plugin package, add an assets section, like this:
-  assets:
-    - images/
-    - .env
+  # assets:
   

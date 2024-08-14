@@ -1,6 +1,5 @@
 import 'package:credio_reader/components/dimensions.dart';
 import 'package:credio_reader/state/reader_state.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:provider/provider.dart';
@@ -15,8 +14,6 @@ class PinInputScreen extends StatefulWidget {
 }
 
 class _PinInputScreenState extends State<PinInputScreen> {
-  bool _isChecked = false;
-
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
@@ -90,39 +87,6 @@ class _PinInputScreenState extends State<PinInputScreen> {
                   SizedBox(
                     height: CredioScaleUtil(context).sizer.setHeight(50),
                   ),
-                  // if (widget.isUserSubscribedToDirectDebit) ...[
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 50.0),
-                    child: Row(
-                      children: [
-                        const Text(
-                          'Get a direct debit each ',
-                          style: TextStyle(fontSize: 12.0),
-                        ),
-                        const Text(
-                          'month',
-                          style: TextStyle(
-                              fontSize: 12.0, color: Color(0xff058B42)),
-                        ),
-                        const Spacer(),
-                        CupertinoSwitch(
-                          value: _isChecked,
-                          activeColor: const Color(0xffB11226),
-                          trackColor: const Color(0xffB11226).withOpacity(0.17),
-                          thumbColor: _isChecked
-                              ? Colors.white
-                              : const Color(0xffBBBBBB).withOpacity(0.17),
-                          onChanged: (bool value) {
-                            setState(() {
-                              _isChecked = value;
-                            });
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  // ],
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 31.0),
                     child: ElevatedButton(

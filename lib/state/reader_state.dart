@@ -311,6 +311,7 @@ class ReaderStateProvider extends ChangeNotifier {
                   narration: doRoute['messageReason'],
                   amount: doRoute["amount"],
                   transactionTime: doRoute["responseTime"],
+                  credioConfig: configurations,
                 );
               },
             );

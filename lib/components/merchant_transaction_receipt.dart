@@ -1,6 +1,7 @@
 import 'package:credio_reader/components/dimensions.dart';
 import 'package:credio_reader/components/receipts_clipper.dart';
 import 'package:credio_reader/components/typography/text_styles.dart';
+import 'package:credio_reader/configuration/configuration.dart';
 import 'package:credio_reader/state/reader_state.dart';
 import 'package:credio_reader/utils/helper.dart';
 import 'package:flutter/material.dart';
@@ -24,6 +25,7 @@ class MerchantTransactionReceipt extends StatefulWidget {
   final String? stan;
   final num? amount;
   final String? transactionTime;
+  final CredioConfig? credioConfig;
 
   const MerchantTransactionReceipt({
     Key? key,
@@ -40,6 +42,7 @@ class MerchantTransactionReceipt extends StatefulWidget {
     this.stan,
     this.amount,
     this.transactionTime,
+    this.credioConfig,
   }) : super(key: key);
 
   @override
@@ -49,6 +52,64 @@ class MerchantTransactionReceipt extends StatefulWidget {
 
 class _MerchantTransactionReceiptState
     extends State<MerchantTransactionReceipt> {
+  @override
+  Widget build(BuildContext context) {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (_) => ReaderStateProvider.instance(
+            credioConfig: widget.credioConfig,
+          ),
+        ),
+      ],
+      child: MerchantTransactionReceiptContent(
+        amount: widget.amount,
+        responseCode: widget.responseCode,
+        transactionTime: widget.transactionTime,
+        maskedPan: widget.maskedPan,
+        cardType: widget.cardType,
+        terminalId: widget.terminalId,
+        rrn: widget.rrn,
+        authCode: widget.authCode,
+        stan: widget.stan,
+        narration: widget.narration,
+      ),
+    );
+  }
+}
+
+class MerchantTransactionReceiptContent extends StatefulWidget {
+  final num? amount;
+  final String? responseCode;
+  final String? transactionTime;
+  final String? maskedPan;
+  final String? cardType;
+  final String? terminalId;
+  final String? rrn;
+  final String? authCode;
+  final String? stan;
+  final String? narration;
+
+  const MerchantTransactionReceiptContent({
+    Key? key,
+    this.amount,
+    this.responseCode,
+    this.transactionTime,
+    this.maskedPan,
+    this.cardType,
+    this.terminalId,
+    this.rrn,
+    this.authCode,
+    this.stan,
+    this.narration,
+  }) : super(key: key);
+  @override
+  State<MerchantTransactionReceiptContent> createState() =>
+      _MerchantTransactionReceiptContentState();
+}
+
+class _MerchantTransactionReceiptContentState
+    extends State<MerchantTransactionReceiptContent> {
   late ScreenshotController controller;
   final ValueNotifier<bool> hideBtn = ValueNotifier(false);
 
@@ -185,36 +246,6 @@ class _MerchantTransactionReceiptState
                       const Divider(
                         color: Color(0xFFE8EAED),
                         thickness: 1.5,
-                      ),
-                      InkWell(
-                        onTap: () async {
-                          hideBtn.value = true;
-                          hideBtn.value = false;
-                        },
-                        child: ValueListenableBuilder(
-                          valueListenable: hideBtn,
-                          builder: (context, bool hidden, child) {
-                            if (hidden) return const Offstage();
-                            return child!;
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                SvgPicture.asset('assets/share_receipt.svg'),
-                                SizedBox(width: scaler.sizer.setWidth(4)),
-                                Text(
-                                  'Share',
-                                  style: CredioTextStyle.medium.copyWith(
-                                    color: const Color(0xFF3D3D3D),
-                                    fontSize: 18,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
                       ),
                       SizedBox(
                         height: CredioScaleUtil(context).sizer.setHeight(2),

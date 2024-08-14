@@ -121,7 +121,7 @@ ReaderButton(config)
 
 The transaction process is initiated when the user presses the custom Credio button. The plugin manages the interaction with the credio reader and handles the transaction in the background. Upon completion, the callback function is triggered, providing the result of the transaction.
 
-  - Successful Transaction: The callback function will return a success message, including transaction details like the    amount, timestamp, and confirmation code.
+  - Successful Transaction: The callback function will return a success message, including transaction details like the amount, timestamp, and reponse code. A transaction is only considered successful if the responseCode is “00"
   - Failed Transaction: In case of an error or failure, the callback will include error details, allowing the app to inform the user and take appropriate actions.
 
 ## Error Handling
