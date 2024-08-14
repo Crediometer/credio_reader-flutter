@@ -23,6 +23,7 @@ dependencies:
   intl:
   provider: ^6.1.2
   flutter_plugin_qpos: 0.1.4+2-debug
+  dio: ^5.6.0
 
 dev_dependencies:
   flutter_test:

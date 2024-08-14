@@ -25,12 +25,17 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   late final CredioConfig _config;
-  final apiKey = "apiKey";
+  final apiKey = "+2349091919191";
+
   @override
   void initState() {
     super.initState();
-    _config = CredioConfig(apiKey,
-        directDebit: false, terminalId: "2070FLRX", companyColor: Colors.green);
+    _config = CredioConfig(
+      apiKey,
+      '2070FLRX',
+      'https://webhook.site/3114981d-f591-41a0-91e7-7fb433c058b8',
+      companyColor: Colors.green,
+    );
     if (mounted) {
       setState(() {});
     }

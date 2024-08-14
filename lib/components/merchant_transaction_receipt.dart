@@ -1,16 +1,16 @@
 import 'package:credio_reader/components/dimensions.dart';
 import 'package:credio_reader/components/receipts_clipper.dart';
 import 'package:credio_reader/components/typography/text_styles.dart';
+import 'package:credio_reader/state/reader_state.dart';
 import 'package:credio_reader/utils/helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:provider/provider.dart';
 import 'package:screenshot/screenshot.dart';
 
 import '../consts/app_strings.dart';
 
 class MerchantTransactionReceipt extends StatefulWidget {
-  // final Transaction receipt;
-  // final Profile profile;
   final String? maskedPan;
   final String? cardType;
   final String? creditAccountName;
@@ -27,8 +27,6 @@ class MerchantTransactionReceipt extends StatefulWidget {
 
   const MerchantTransactionReceipt({
     Key? key,
-    // required thiseceipt,
-    // required this.profile,
     this.maskedPan,
     this.cardType,
     this.creditAccountName,
@@ -63,215 +61,205 @@ class _MerchantTransactionReceiptState
   @override
   Widget build(BuildContext context) {
     final scaler = CredioScaleUtil(context);
+    final readerState = context.watch<ReaderStateProvider>();
     return Scaffold(
-        backgroundColor: const Color(0xFFF6F6F6),
-        body: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Screenshot(
-                controller: controller,
-                child: ClipPath(
-                  clipper: ReceiptClipper(),
-                  child: Container(
-                    margin: const EdgeInsets.symmetric(
-                      horizontal: 18,
-                      vertical: 23,
+      backgroundColor: const Color(0xFFF6F6F6),
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Screenshot(
+              controller: controller,
+              child: ClipPath(
+                clipper: ReceiptClipper(),
+                child: Container(
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 18,
+                    vertical: 23,
+                  ),
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(22),
+                      topRight: Radius.circular(22),
                     ),
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(22),
-                        topRight: Radius.circular(22),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      transactionStatusImage(),
+                      SizedBox(
+                        height: scaler.sizer.setHeight(1.5),
                       ),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        transactionStatusImage(),
-                        SizedBox(
-                          height: scaler.sizer.setHeight(1.5),
+                      Text(
+                        'Credio.',
+                        textAlign: TextAlign.center,
+                        style: CredioTextStyle.bold.copyWith(
+                          color: const Color(0xFFB11226),
+                          fontSize: 26,
                         ),
-                        Text(
-                          'Credio.',
-                          textAlign: TextAlign.center,
-                          style: CredioTextStyle.bold.copyWith(
-                            color: const Color(0xFFB11226),
-                            fontSize: 26,
-                          ),
+                      ),
+                      Text(
+                        formatCurrency("${(widget.amount ?? 0) / 100}"),
+                        textAlign: TextAlign.center,
+                        style: CredioTextStyle.semiBold.copyWith(
+                          color: const Color(0xFF333333),
+                          fontSize: 29,
                         ),
-                        Text(
-                          formatCurrency("${(widget.amount ?? 0) / 100}"),
-                          textAlign: TextAlign.center,
-                          style: CredioTextStyle.semiBold.copyWith(
-                            color: const Color(0xFF333333),
-                            fontSize: 29,
-                          ),
+                      ),
+                      Text(
+                        '${getSuccessful(widget.responseCode) ? 'Successful' : 'Unsuccessful'} transaction',
+                        textAlign: TextAlign.center,
+                        style: CredioTextStyle.medium.copyWith(
+                          color: getSuccessful(widget.responseCode)
+                              ? const Color(0xFF058B42)
+                              : const Color(0xFFB11226),
+                          fontSize: 14,
                         ),
-                        Text(
-                          '${getSuccessful(widget.responseCode) ? 'Successful' : 'Unsuccessful'} transaction',
-                          textAlign: TextAlign.center,
-                          style: CredioTextStyle.medium.copyWith(
-                            color: getSuccessful(widget.responseCode)
-                                ? const Color(0xFF058B42)
-                                : const Color(0xFFB11226),
-                            fontSize: 14,
-                          ),
+                      ),
+                      Text(
+                        formatDate(
+                          widget.transactionTime ?? '',
+                          format: "HH:mm, MMM dd, y",
                         ),
-                        Text(
-                          formatDate(
-                            widget.transactionTime ?? '',
-                            format: "HH:mm, MMM dd, y",
-                          ),
-                          textAlign: TextAlign.center,
-                          style: CredioTextStyle.medium.copyWith(
-                            color: const Color(0xFF333333).withOpacity(0.6),
-                            fontSize: 13,
-                          ),
+                        textAlign: TextAlign.center,
+                        style: CredioTextStyle.medium.copyWith(
+                          color: const Color(0xFF333333).withOpacity(0.6),
+                          fontSize: 13,
                         ),
-                        SizedBox(
-                          height: scaler.sizer.setHeight(2),
-                        ),
-                        const TransactionSeparator(),
-                        SizedBox(
-                          height: scaler.sizer.setHeight(2),
-                        ),
-                        const TransactionSectionHeader("Card Holder"),
-                        TransactionRow(
-                            title: 'Masked Pan',
-                            description: widget.maskedPan ?? ""),
-                        TransactionRow(
-                            title: 'Card Type',
-                            description: widget.cardType ?? ""),
-                        SizedBox(
-                          height: scaler.sizer.setHeight(2),
-                        ),
-                        const TransactionSeparator(),
-                        SizedBox(
-                          height: scaler.sizer.setHeight(2),
-                        ),
-                        const TransactionSectionHeader("Recipient"),
-                        const TransactionRow(
-                            title: 'Account Number',
-                            description: "0231973328" ?? ""),
-                        const TransactionRow(
-                            title: 'Merchant Name',
-                            description: "Rasheed Abefe Raji" ?? ""),
-                        TransactionRow(
-                            title: 'Terminal Id',
-                            description: widget.terminalId ?? ""),
-                        SizedBox(
-                          height: scaler.sizer.setHeight(2),
-                        ),
-                        const TransactionSeparator(),
-                        SizedBox(
-                          height: scaler.sizer.setHeight(2),
-                        ),
-                        const TransactionSectionHeader("Transaction Info"),
-                        TransactionRow(
-                            title: 'RRN', description: widget.rrn ?? ""),
-                        TransactionRow(
-                            title: 'Response Code',
-                            description: widget.responseCode ?? ""),
-                        TransactionRow(
-                            title: 'Auth Code',
-                            description: widget.authCode ?? ""),
-                        TransactionRow(
-                            title: 'Stan', description: widget.stan ?? ""),
-                        TransactionRow(
-                            title: 'Message',
-                            description: widget.narration ?? ""),
-                        SizedBox(
-                          height: scaler.sizer.setHeight(2),
-                        ),
-                        const Divider(
-                          color: Color(0xFFE8EAED),
-                          thickness: 1.5,
-                        ),
-                        InkWell(
-                          onTap: () async {
-                            hideBtn.value = true;
-                            // await formSubmitDialog(
-                            //   context: context,
-                            //   future: shareReceipt(
-                            //     controller,
-                            //     scaler.sizer.setHeight(0.8),
-                            //     transaction: transaction.transaction!
-                            //         .firstWhere((element) =>
-                            //             element.to ==
-                            //             data.message!.profile!.vaults!
-                            //                 .phoneNumber),
-                            //   ),
-                            //   prompt:
-                            //       "Please wait as we generate your receipt",
-                            // );
-                            hideBtn.value = false;
+                      ),
+                      SizedBox(
+                        height: scaler.sizer.setHeight(2),
+                      ),
+                      const TransactionSeparator(),
+                      SizedBox(
+                        height: scaler.sizer.setHeight(2),
+                      ),
+                      const TransactionSectionHeader("Card Holder"),
+                      TransactionRow(
+                          title: 'Masked Pan',
+                          description: widget.maskedPan ?? ""),
+                      TransactionRow(
+                          title: 'Card Type',
+                          description: widget.cardType ?? ""),
+                      SizedBox(
+                        height: scaler.sizer.setHeight(2),
+                      ),
+                      const TransactionSeparator(),
+                      SizedBox(
+                        height: scaler.sizer.setHeight(2),
+                      ),
+                      const TransactionSectionHeader("Recipient"),
+                      const TransactionRow(
+                          title: 'Account Number',
+                          description: "0231973328" ?? ""),
+                      const TransactionRow(
+                          title: 'Merchant Name',
+                          description: "Rasheed Abefe Raji" ?? ""),
+                      TransactionRow(
+                          title: 'Terminal Id',
+                          description: widget.terminalId ?? ""),
+                      SizedBox(
+                        height: scaler.sizer.setHeight(2),
+                      ),
+                      const TransactionSeparator(),
+                      SizedBox(
+                        height: scaler.sizer.setHeight(2),
+                      ),
+                      const TransactionSectionHeader("Transaction Info"),
+                      TransactionRow(
+                          title: 'RRN', description: widget.rrn ?? ""),
+                      TransactionRow(
+                          title: 'Response Code',
+                          description: widget.responseCode ?? ""),
+                      TransactionRow(
+                          title: 'Auth Code',
+                          description: widget.authCode ?? ""),
+                      TransactionRow(
+                          title: 'Stan', description: widget.stan ?? ""),
+                      TransactionRow(
+                          title: 'Message',
+                          description: widget.narration ?? ""),
+                      SizedBox(
+                        height: scaler.sizer.setHeight(2),
+                      ),
+                      const Divider(
+                        color: Color(0xFFE8EAED),
+                        thickness: 1.5,
+                      ),
+                      InkWell(
+                        onTap: () async {
+                          hideBtn.value = true;
+                          hideBtn.value = false;
+                        },
+                        child: ValueListenableBuilder(
+                          valueListenable: hideBtn,
+                          builder: (context, bool hidden, child) {
+                            if (hidden) return const Offstage();
+                            return child!;
                           },
-                          child: ValueListenableBuilder(
-                            valueListenable: hideBtn,
-                            builder: (context, bool hidden, child) {
-                              if (hidden) return const Offstage();
-                              return child!;
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.all(16),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  SvgPicture.asset('assets/share_receipt.svg'),
-                                  SizedBox(width: scaler.sizer.setWidth(4)),
-                                  Text(
-                                    'Share',
-                                    style: CredioTextStyle.medium.copyWith(
-                                      color: const Color(0xFF3D3D3D),
-                                      fontSize: 18,
-                                    ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SvgPicture.asset('assets/share_receipt.svg'),
+                                SizedBox(width: scaler.sizer.setWidth(4)),
+                                Text(
+                                  'Share',
+                                  style: CredioTextStyle.medium.copyWith(
+                                    color: const Color(0xFF3D3D3D),
+                                    fontSize: 18,
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ),
                         ),
-                        SizedBox(
-                          height: CredioScaleUtil(context).sizer.setHeight(2),
-                        ),
-                      ],
+                      ),
+                      SizedBox(
+                        height: CredioScaleUtil(context).sizer.setHeight(2),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            ValueListenableBuilder(
+              valueListenable: hideBtn,
+              builder: (context, bool hidden, child) {
+                if (hidden) return const Offstage();
+                return child!;
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 18),
+                child: ElevatedButton(
+                  onPressed: () {},
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: readerState.configurations.companyColor ??
+                        const Color(0xffB11226),
+                    fixedSize: const Size(double.infinity, 53.0),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                  ),
+                  child: const Text(
+                    'Done',
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.white,
                     ),
                   ),
                 ),
               ),
-              ValueListenableBuilder(
-                  valueListenable: hideBtn,
-                  builder: (context, bool hidden, child) {
-                    if (hidden) return const Offstage();
-                    return child!;
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 18),
-                    child: ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xffB11226),
-                        fixedSize: const Size(double.infinity, 53.0),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                      ),
-                      child: const Text(
-                        'Done',
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  )),
-              SizedBox(
-                height: scaler.sizer.setHeight(5),
-              )
-            ],
-          ),
-        ));
+            ),
+            SizedBox(
+              height: scaler.sizer.setHeight(5),
+            )
+          ],
+        ),
+      ),
+    );
   }
 
   Widget transactionStatusImage() {

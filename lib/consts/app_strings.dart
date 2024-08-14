@@ -36,5 +36,10 @@ const String credioLogo =
 </svg>
 """;
 
+const String currency = "0566";
+
+const String transType = "GOODS";
 const String comingSoon =
     "The feature is coming soon! Stay tuned to Credio to enjoy new and exciting features.";
+const String connectCredioReader = 'Connect Credio Reader';
+const String initialWithdrawal = 'Initiate Withdrawal';
