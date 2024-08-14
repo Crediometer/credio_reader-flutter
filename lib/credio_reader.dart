@@ -58,8 +58,10 @@ class ReaderButtonContent extends StatelessWidget {
     return ValueListenableBuilder<PosConnectionState>(
       valueListenable: readerState.posState,
       builder: (context, posState, child) {
+        final button = readerState.configurations.initializerButton;
+
         return GestureDetector(
-          child: _buildDefaultButton(context, readerState, posState),
+          child: button ?? _buildDefaultButton(context, readerState, posState),
           onTap: () => _handleButtonTap(context, readerState, posState),
         );
       },
@@ -70,18 +72,21 @@ class ReaderButtonContent extends StatelessWidget {
       ReaderStateProvider readerState, PosConnectionState posState) {
     return ElevatedButton(
       onPressed: () => _handleButtonTap(context, readerState, posState),
-      style: ButtonStyle(
-        side: MaterialStateProperty.all(
-          const BorderSide(color: Colors.white),
-        ),
-        backgroundColor: MaterialStateProperty.all(
-          readerState.configurations.companyColor ?? const Color(0xffB11226),
-        ),
-      ),
+      style: readerState.configurations.buttonConfiguration?.buttonStyle ??
+          ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xffB11226),
+            fixedSize: const Size(double.infinity, 53.0),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+          ),
       child: Text(
         posState == PosConnectionState.notConnected
             ? connectCredioReader
             : initialWithdrawal,
+        style: TextStyle(
+          color: Colors.white,
+        ),
       ),
     );
   }
@@ -123,7 +128,7 @@ class ReaderButtonContent extends StatelessWidget {
         return CredioDialogScaffold(
           showClose: true,
           padded: true,
-          color: readerState.configurations.companyColor,
+          color: const Color(0xffB11226),
           child: DialogMessage(
             messageType: MessageType.Pending,
             message: "Getting Available Reader",
@@ -139,8 +144,7 @@ class ReaderButtonContent extends StatelessWidget {
     await showDialog(
       context: context,
       builder: (context) {
-        final color =
-            readerState.configurations.companyColor ?? const Color(0xffB11226);
+        final color = const Color(0xffB11226);
 
         return Platform.isIOS
             ? CupertinoAlertDialog(

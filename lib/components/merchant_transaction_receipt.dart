@@ -265,14 +265,15 @@ class _MerchantTransactionReceiptContentState
                 padding: const EdgeInsets.symmetric(horizontal: 18),
                 child: ElevatedButton(
                   onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: readerState.configurations.companyColor ??
-                        const Color(0xffB11226),
-                    fixedSize: const Size(double.infinity, 53.0),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                  ),
+                  style: readerState
+                          .configurations.buttonConfiguration?.buttonStyle ??
+                      ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xffB11226),
+                        fixedSize: const Size(double.infinity, 53.0),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                      ),
                   child: const Text(
                     'Done',
                     style: TextStyle(

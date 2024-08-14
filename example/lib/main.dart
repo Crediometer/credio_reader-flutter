@@ -1,3 +1,4 @@
+import 'package:credio_reader/configuration/button_configuration.dart';
 import 'package:credio_reader/configuration/configuration.dart';
 import 'package:credio_reader/credio_reader.dart';
 import 'package:credio_reader_example/nav.dart';
@@ -25,7 +26,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   late final CredioConfig _config;
-  final apiKey = "+2349090909090";
+  final apiKey = "+2349061112233";
 
   @override
   void initState() {
@@ -34,7 +35,20 @@ class _MyAppState extends State<MyApp> {
       apiKey,
       '2070FLRX',
       'your_webhook_url',
-      companyColor: Colors.green,
+      locator<NavigationService>().navigatorKey,
+      initializerButton: Text("I can use a single Text"),
+      buttonConfiguration: ButtonConfiguration(
+        buttonStyle: ElevatedButton.styleFrom(
+          backgroundColor: Colors.green,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(
+              Radius.circular(
+                15.0,
+              ),
+            ),
+          ),
+        ),
+      ),
     );
     if (mounted) {
       setState(() {});
@@ -44,7 +58,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(primarySwatch: Colors.red),
+      theme: ThemeData(primarySwatch: Colors.purple),
       navigatorKey: locator<NavigationService>().navigatorKey,
       home: Scaffold(
         appBar: AppBar(
@@ -53,7 +67,6 @@ class _MyAppState extends State<MyApp> {
         body: Center(
           child: Builder(
             builder: (context) {
-              _config.locator = locator<NavigationService>().navigatorKey;
               return ReaderButton(_config);
             },
           ),

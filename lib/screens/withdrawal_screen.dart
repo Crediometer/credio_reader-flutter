@@ -146,13 +146,15 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                         title: "Select Account Type",
                       );
                     },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xffB11226),
-                      fixedSize: const Size(double.infinity, 53.0),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                    ),
+                    style: readerState
+                            .configurations.buttonConfiguration?.buttonStyle ??
+                        ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xffB11226),
+                          fixedSize: const Size(double.infinity, 53.0),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                        ),
                     child: const Text(
                       'Continue',
                       style: TextStyle(

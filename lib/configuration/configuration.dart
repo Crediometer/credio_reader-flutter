@@ -1,22 +1,25 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
+import 'button_configuration.dart';
 
 class CredioConfig {
   String? terminalId;
-  Color? companyColor;
   Map<String, dynamic>? metaData;
   late GlobalKey<NavigatorState>? locator;
   String? webhookURL;
+  ButtonConfiguration? buttonConfiguration;
+  Widget? initializerButton;
 
   late String apiKey;
 
   CredioConfig(
     this.apiKey,
     this.terminalId,
-    this.webhookURL, {
-    this.locator,
+    this.webhookURL,
+    this.locator, {
+    this.initializerButton,
     this.metaData,
-    this.companyColor,
+    this.buttonConfiguration,
   });
 
   Map<String, dynamic> toMap() {

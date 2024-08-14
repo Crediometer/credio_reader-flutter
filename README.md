@@ -19,32 +19,37 @@ Then, run `flutter pub get` in your terminal to install the package.
 1. The plugin uses the `CredioConfig` class for configuration. Here's how to set it up:
   - `terminalId` (String, required): The unique identifier for the terminal where the transaction will take place.
   - `apiKey` (String, required): The API key is provided to authenticate requests. It's typically the phone number you used during registration on the credio application/admin.
+  - `locator` (GlobalKey<NavigatorState>, required): A GlobalKey for the NavigatorState, used for navigation within the plugin.
   - `companyColor` (Color, optional): Your company's primary color
   - `webhookUrl` (String, optional):  This is the URL where Credio will send POST requests with real-time updates about transactions and other important events. Your server should be configured to listen for POST requests at this URL. This allows your application to receive and process transaction results, connection status updates, and other relevant information asynchronously.
-
   Important: Ensure that your server is configured to handle POST requests at the specified URL. The webhook endpoint should be secure (HTTPS) and able to process incoming JSON payloads.
   - `metaData` (Map<String, dynamic>, optional): This parameter allows you to include additional custom data with each transaction. You can use it to pass any relevant information that you want to associate with the transaction, such as order IDs, customer information, or any other custom fields specific to your application.
+  - `initializerButton` (Widget, optional): A custom widget to be used as the initializer button.
+  - `buttonConfiguration` (ButtonConfiguration, optional): Configuration for customizing the appearance of the ReaderButton.
 
 
   *Example of `CredioConfig` class:
   ```dart
+  final GetIt locator = GetIt.instance;
+
+  void setupLocator() {
+    locator.registerLazySingleton(() => NavigationService());
+  }
+
   final CredioConfig config = CredioConfig(
-    '+2349091919191',
+    '+2349061112233',
     '2070FLRX',
     'your_webhook_url',
-    companyColor: Colors.green,
-  );
-  ```
-
-2. You can also customize the company logo using the `CompanyData` class:
-  - `companyLogo`(AssetImage, optional):  Your company's logo
-  - `companyColor`(Color, optional):  Your company's primary color
-
-  *Example of `CompanyData` class:
-  ```dart
-  CompanyData companyData = CompanyData(
-    AssetImage('assets/company_logo.png'),
-    Colors.blue,
+    locator<NavigationService>().navigatorKey,
+    initializerButton: Text("Custom Initializer Button"),
+    buttonConfiguration: ButtonConfiguration(
+      buttonStyle: ElevatedButton.styleFrom(
+        backgroundColor: Colors.green,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(15.0)),
+        ),
+      ),
+    ),
   );
   ```
 
@@ -64,7 +69,7 @@ In your `AndroidManifest.xml`:
 ```xml
 <uses-permission android:name="android.permission.INTERNET" />
 <uses-permission android:name="android.permission.BLUETOOTH" />
-<uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 <!-- For Android 12 and above -->
 <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
 ```

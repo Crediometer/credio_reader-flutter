@@ -43,3 +43,23 @@ const String comingSoon =
     "The feature is coming soon! Stay tuned to Credio to enjoy new and exciting features.";
 const String connectCredioReader = 'Connect Credio Reader';
 const String initialWithdrawal = 'Initiate Withdrawal';
+
+const String onRequestTransactionResult = 'onRequestTransactionResult';
+const String onRequestWaitingUser = 'onRequestWaitingUser';
+const String onRequestDisplay = 'onRequestDisplay';
+const String onRequestTime = 'onRequestTime';
+const String onRequestSetPin = 'onRequestSetPin';
+const String onDeviceFound = 'onDeviceFound';
+const String onDoTradeResult = 'onDoTradeResult';
+const String onError = 'onError';
+const String onRequestQposDisconnected = 'onRequestQposDisconnected';
+const String onBluetoothBondTimeout = 'onBluetoothBondTimeout';
+const String onRequestSelectEmvApp = 'onRequestSelectEmvApp';
+const String onRequestQposConnected = 'onRequestQposConnected';
+const String onBluetoothBonding = 'onBluetoothBonding';
+const String onRequestSetAmount = 'onRequestSetAmount';
+const String onRequestDeviceScanFinished = 'onRequestDeviceScanFinished';
+const String onRequestNoQposDetected = 'onRequestNoQposDetected';
+const String onRequestOnlineProcess = 'onRequestOnlineProcess';
+const String onBluetoothBondFailed = 'onBluetoothBondFailed';
+const String bluetoothIsPowerOff2Mode = 'bluetoothIsPowerOff2Mode';

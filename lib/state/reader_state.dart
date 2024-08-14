@@ -2,8 +2,11 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:credio_reader/components/app_selection_sheet.dart';
+import 'package:credio_reader/components/dialog_message_copy.dart';
+import 'package:credio_reader/components/dialog_scaffold.dart';
 import 'package:credio_reader/components/merchant_transaction_receipt.dart';
 import 'package:credio_reader/configuration/configuration.dart';
+import 'package:credio_reader/consts/app_strings.dart';
 import 'package:credio_reader/models/reader_transaction_request.dart';
 import 'package:credio_reader/screens/pin_input_screen.dart';
 import 'package:credio_reader/services/http.dart';
@@ -15,6 +18,7 @@ import 'package:flutter_plugin_qpos/flutter_plugin_qpos.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import 'package:credio_reader/screens/withdrawal_screen.dart';
 import '../utils/utils.dart';
 import '../models/set_amount.dart';
 
@@ -97,7 +101,7 @@ class ReaderStateProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> connectToDevice(String item) async {
+  Future<void> connectToDevice(String item, BuildContext context) async {
     List<String> addrs = item.split("//");
     scanFinish = 0;
     items = null;
@@ -137,7 +141,7 @@ class ReaderStateProvider extends ChangeNotifier {
     }
 
     switch (method) {
-      case 'onRequestTransactionResult':
+      case onRequestTransactionResult:
         if ((parameters ?? '').contains('Approved')) {
           log("yeah Approved");
         } else if (parameters?.toLowerCase() == 'cancel' ||
@@ -146,13 +150,13 @@ class ReaderStateProvider extends ChangeNotifier {
         display = parameters!;
         notifyListeners();
         break;
-      case 'onRequestWaitingUser':
+      case onRequestWaitingUser:
         if (lastMessage?.toLowerCase() !=
             "Please insert/swipe/tap card!".toLowerCase()) {
           lastMessage = "Please insert/swipe/tap card!";
         }
         break;
-      case 'onRequestDisplay':
+      case onRequestDisplay:
         display = parameters!;
         log("onRequestDisplay -- $display");
         if (display.toLowerCase().toLowerCase() == 'please') {}
@@ -168,7 +172,7 @@ class ReaderStateProvider extends ChangeNotifier {
         notifyListeners();
         break;
 
-      case 'onRequestTime':
+      case onRequestTime:
         String dateSlug =
             "${today.year.toString()}${today.month.toString().padLeft(2, '0')}${today.day.toString().padLeft(2, '0')}${today.hour.toString().padLeft(2, '0')}${today.minute.toString().padLeft(2, '0')}${today.second.toString().padLeft(2, '0')}";
 
@@ -176,7 +180,7 @@ class ReaderStateProvider extends ChangeNotifier {
           dateSlug,
         );
         break;
-      case 'onRequestSetPin':
+      case onRequestSetPin:
         display = "Please input pin on your app";
         log(display);
         notifyListeners();
@@ -189,7 +193,7 @@ class ReaderStateProvider extends ChangeNotifier {
         );
         break;
 
-      case 'onDeviceFound':
+      case onDeviceFound:
         items ??= List.empty(growable: true);
         if ((parameters!.startsWith("MPOS") ||
                 parameters.startsWith("Credio")) &&
@@ -204,7 +208,7 @@ class ReaderStateProvider extends ChangeNotifier {
         }
         break;
 
-      case 'onDoTradeResult':
+      case onDoTradeResult:
         log("onDoTradeResult... $paras");
         log("something is wrong here????");
         if (Utils.equals(paras[0], "ICC")) {
@@ -222,51 +226,58 @@ class ReaderStateProvider extends ChangeNotifier {
         } else {}
         break;
 
-      case 'onError':
+      case onError:
         display = parameters!;
         notifyListeners();
         break;
-      case 'onRequestQposDisconnected':
+      case onRequestQposDisconnected:
         display = "device disconnected!";
         _subscription!.cancel();
         initStateCalled = false;
         notifyListeners();
         break;
-      case 'onBluetoothBondTimeout':
+      case onBluetoothBondTimeout:
         Navigator.pop(context!);
         break;
 
-      case 'onRequestSelectEmvApp':
+      case onRequestSelectEmvApp:
         _flutterPluginQPos.selectEmvApp(1);
         break;
-      case 'onRequestQposConnected':
+      case onRequestQposConnected:
         display = "device connected!";
         posState.value = PosConnectionState.connected;
         notifyListeners();
+        await Navigator.push(
+          // ignore: use_build_context_synchronously
+          configurations.locator!.currentContext!,
+          MaterialPageRoute(
+            builder: (context) => WithdrawalScreen(),
+          ),
+        );
         break;
 
-      case 'onBluetoothBonding':
+      case onBluetoothBonding:
         logs.value = "${logs.value}\nBonding with pos machine \n";
 
         Navigator.pop(context!);
         break;
 
-      case 'onRequestSetAmount':
+      case onRequestSetAmount:
         SetAmountParams amountParams = SetAmountParams(
             amount: "${(extractAmount(amountCredio.text) ?? 0) * 100}");
 
         _flutterPluginQPos.setAmount(amountParams.toJson());
         break;
 
-      case 'onRequestDeviceScanFinished':
+      case onRequestDeviceScanFinished:
         processItems(
           items,
         );
         break;
 
-      case 'onRequestNoQposDetected':
+      case onRequestNoQposDetected:
         break;
-      case 'onRequestOnlineProcess':
+      case onRequestOnlineProcess:
         _flutterPluginQPos.sendOnlineProcessResult("8A023030");
 
         if (paras[0].trim().toUpperCase().contains("FALLBACK")) {
@@ -300,7 +311,7 @@ class ReaderStateProvider extends ChangeNotifier {
               builder: (ctx) {
                 return MerchantTransactionReceipt(
                   maskedPan: doRoute["maskedPan"],
-                  cardType: 'Debit Card',
+                  cardType: 'Debit Card', // check this
                   creditAccountName: doRoute["merchantName"],
                   creditAccountNumber: doRoute["customerRef"],
                   terminalId: doRoute["terminalId"],
@@ -320,7 +331,7 @@ class ReaderStateProvider extends ChangeNotifier {
           log("Error occurred during server connection $error");
         } finally {}
         break;
-      case 'onBluetoothBondFailed':
+      case onBluetoothBondFailed:
         Navigator.pop(context!);
         showDialog(
           context: context!,
@@ -330,7 +341,7 @@ class ReaderStateProvider extends ChangeNotifier {
           },
         );
         break;
-      case 'bluetoothIsPowerOff2Mode':
+      case bluetoothIsPowerOff2Mode:
         Navigator.pop(context!);
         showDialog(
           context: context!,
@@ -383,21 +394,38 @@ class ReaderStateProvider extends ChangeNotifier {
     Navigator.pop(context!);
 
     try {
-      showSelectionSheet(
-        context!,
-        onSelect: (data) async {
-          await connectToDevice((data.selection)!);
-        },
-        title: "Select device",
-        data: (items ?? []).map((item) {
-          var name = item.split("//")[0].replaceAll(regexPattern, '');
+      if ((items ?? []).isEmpty) {
+        showDialog(
+            context: context!,
+            builder: ((context) {
+              return CredioDialogScaffold(
+                showClose: true,
+                padded: true,
+                child: DialogMessage(
+                  message: 'You have no reader available',
+                  messageType: MessageType.Info,
+                ),
+              );
+            }));
+      } else if (items?.length == 1) {
+        await connectToDevice(items!.first, context!);
+      } else {
+        showSelectionSheet(
+          context!,
+          onSelect: (data) async {
+            await connectToDevice((data.selection)!, context!);
+          },
+          title: "Select device",
+          data: (items ?? []).map((item) {
+            var name = item.split("//")[0].replaceAll(regexPattern, '');
 
-          return SelectionData(
-            selection: item,
-            title: name,
-          );
-        }).toList(),
-      );
+            return SelectionData(
+              selection: item,
+              title: name,
+            );
+          }).toList(),
+        );
+      }
     } catch (e) {
       log("an error occurred -- $e");
     }
