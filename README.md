@@ -38,16 +38,20 @@ Then, run `flutter pub get` in your terminal to install the package.
   }
 
   final CredioConfig config = CredioConfig(
-    '+2349061112233',
+    apiKey,
     '2070FLRX',
-    'your_webhook_url',
+    webHookUrl,
     locator<NavigationService>().navigatorKey,
-    initializerButton: Text("Custom Initializer Button"),
+    initializerButton: Text("I can use a single Text"),
     buttonConfiguration: ButtonConfiguration(
       buttonStyle: ElevatedButton.styleFrom(
         backgroundColor: Colors.green,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(15.0)),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(
+            Radius.circular(
+              15.0,
+            ),
+          ),
         ),
       ),
     ),
