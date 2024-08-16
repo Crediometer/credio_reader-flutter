@@ -37,6 +37,10 @@ Then, run `flutter pub get` in your terminal to install the package.
     locator.registerLazySingleton(() => NavigationService());
   }
 
+  final apiKey =
+      'your_api_key'; //example: tracker_cred_8f3X9pLm2qRt7vYw4hNk6bJc
+  final webHookUrl = 'your_webHook_url';
+
   final CredioConfig config = CredioConfig(
     apiKey,
     '2070FLRX',
