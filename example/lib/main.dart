@@ -26,7 +26,9 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   late final CredioConfig _config;
-  final apiKey = "+2349061112233";
+  final apiKey =
+      'your_api_key'; //example: tracker_cred_8f3X9pLm2qRt7vYw4hNk6bJc
+  final webHookUrl = 'your_webHook_url';
 
   @override
   void initState() {
@@ -34,7 +36,7 @@ class _MyAppState extends State<MyApp> {
     _config = CredioConfig(
       apiKey,
       '2070FLRX',
-      'your_webhook_url',
+      webHookUrl,
       locator<NavigationService>().navigatorKey,
       initializerButton: Text("I can use a single Text"),
       buttonConfiguration: ButtonConfiguration(

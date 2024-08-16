@@ -1,6 +1,6 @@
 name: credio_reader
 description: A Flutter plugin designed to simplify the process of integrating a credio reader into your mobile application.
-version: 0.0.3
+version: 0.0.4
 homepage: https://crediometer.com
 
 environment:

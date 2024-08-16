@@ -18,7 +18,8 @@ Then, run `flutter pub get` in your terminal to install the package.
 
 1. The plugin uses the `CredioConfig` class for configuration. Here's how to set it up:
   - `terminalId` (String, required): The unique identifier for the terminal where the transaction will take place.
-  - `apiKey` (String, required): The API key is provided to authenticate requests. It's typically the phone number you used during registration on the credio application/admin.
+ - `apiKey` (String, required): The API key used to authenticate requests. This key is generated when you sign up on the Credio TrackMoney platform (https://trackmoney.crediometer.com/). The API key format is similar to `tracker_cred_8f3X9pLm2qRt7vYw4hNk6bJc`. Follow the registration process on the TrackMoney platform to obtain your unique API key.
+  **Note: The API key is no longer the phone number used for registration. Make sure to update your integration to use the new API key format.
   - `locator` (GlobalKey<NavigatorState>, required): A GlobalKey for the NavigatorState, used for navigation within the plugin.
   - `companyColor` (Color, optional): Your company's primary color
   - `webhookUrl` (String, optional):  This is the URL where Credio will send POST requests with real-time updates about transactions and other important events. Your server should be configured to listen for POST requests at this URL. This allows your application to receive and process transaction results, connection status updates, and other relevant information asynchronously.

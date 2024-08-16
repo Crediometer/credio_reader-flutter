@@ -1,21 +1,11 @@
-## 0.0.3
+## 0.0.4
 
-## Version 0.0.3 - 2024-08-14
-
-### Added
-- New `locator` parameter in `CredioConfig` for improved navigation handling.
-- `initializerButton` parameter in `CredioConfig` to allow custom initializer button widgets.
-- `ButtonConfiguration` class for customizing the appearance of the ReaderButton.
+## Version 0.0.4 - 2024-08-16
 
 ### Changed
-- `CredioConfig` constructor now requires `apiKey`, `terminalId`, `webhookURL`, and `locator` as positional parameters.
-- `companyColor` parameter removed from `CredioConfig`. Use `buttonConfiguration` for button styling instead.
+- API key format and generation process. The API key is now generated through the Credio TrackMoney platform (https://trackmoney.crediometer.com/) instead of using the phone number from the Credio application/admin.
+- Updated documentation to reflect the new API key format and generation process.
 
-### Deprecated
-- `companyColor` parameter in `CredioConfig` is no longer used.
-
-### Removed
-- `directDebit` parameter from `CredioConfig` as it's no longer needed.
-
-### Fixed
-- Improved type safety by making `terminalId` and `webhookURL` non-nullable.
+### Important
+- Users need to sign up on https://trackmoney.crediometer.com/ to generate their new API key.
+- Existing integrations using phone numbers as API keys will need to be updated to the new API key format.
