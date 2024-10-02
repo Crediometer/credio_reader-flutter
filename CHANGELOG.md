@@ -1,6 +1,6 @@
 ## 0.0.5
 
-## Version 0.0.4 - 2024-10-02
+## Version 0.0.5 - 2024-10-02
 
 ### Added
 - Customizable amount input: Developers can now customize the appearance of the amount input field.
