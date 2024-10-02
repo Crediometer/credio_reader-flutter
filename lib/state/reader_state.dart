@@ -270,9 +270,6 @@ class ReaderStateProvider extends ChangeNotifier {
         SetAmountParams amountParams =
             SetAmountParams(amount: "${(amount * 100).toInt()}");
 
-        // SetAmountParams amountParams = SetAmountParams(
-        //     amount: "${(extractAmount(amountCredio.text) ?? 0) * 100}");
-
         _flutterPluginQPos.setAmount(amountParams.toJson());
         break;
 
