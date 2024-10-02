@@ -20,6 +20,8 @@ class _PinInputScreenState extends State<PinInputScreen> {
       create: (context) => ReaderStateProvider.instance(),
       builder: (ctx, child) {
         final readerState = ctx.read<ReaderStateProvider>();
+        final config = readerState.configurations;
+
         return Scaffold(
           extendBodyBehindAppBar: true,
           body: SafeArea(
@@ -58,32 +60,42 @@ class _PinInputScreenState extends State<PinInputScreen> {
                     ),
                   ),
                   const SizedBox(height: 40),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 48.0),
-                    child: PinCodeTextField(
-                      autoFocus: true,
-                      appContext: context,
-                      onCompleted: (pin) => {readerState.sendPin(context, pin)},
-                      length: 4,
-                      controller: readerState.pinController,
-                      obscureText: true,
-                      obscuringCharacter: '*',
-                      keyboardType: TextInputType.number,
-                      pinTheme: PinTheme(
-                        borderRadius: BorderRadius.circular(8.0),
-                        inactiveColor: const Color(0xff707070),
-                        activeColor: const Color(0xff058B42),
-                        selectedColor: const Color(0xff058B42),
-                        shape: PinCodeFieldShape.box,
-                        borderWidth: 1,
-                        inactiveBorderWidth: 1,
-                        selectedBorderWidth: 1,
-                        activeBorderWidth: 1,
-                        fieldHeight: 60,
-                        fieldWidth: 60,
+                  if (config.customPinEntry != null)
+                    config.customPinEntry!(
+                      context,
+                      (pin) => readerState.sendPin(context, pin),
+                    )
+                  else
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 48.0),
+                      child: PinCodeTextField(
+                        autoFocus: true,
+                        appContext: context,
+                        onCompleted: (pin) => readerState.sendPin(context, pin),
+                        length: 4,
+                        controller: readerState.pinController,
+                        obscureText: true,
+                        obscuringCharacter: '*',
+                        keyboardType: TextInputType.number,
+                        pinTheme: PinTheme(
+                          shape: PinCodeFieldShape.box,
+                          borderRadius: BorderRadius.circular(8.0),
+                          fieldHeight: 60,
+                          fieldWidth: 60,
+                          activeFillColor: Colors.white,
+                          inactiveFillColor: Colors.white,
+                          selectedFillColor: Colors.white,
+                          activeColor: const Color(0xff058B42),
+                          inactiveColor: const Color(0xff707070),
+                          selectedColor: const Color(0xff058B42),
+                        ),
+                        cursorColor: Colors.black,
+                        animationDuration: const Duration(milliseconds: 300),
+                        enableActiveFill: true,
+                        textStyle: const TextStyle(fontSize: 20, height: 1.6),
+                        backgroundColor: Colors.transparent,
                       ),
                     ),
-                  ),
                   SizedBox(
                     height: CredioScaleUtil(context).sizer.setHeight(50),
                   ),

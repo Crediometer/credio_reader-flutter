@@ -251,7 +251,9 @@ class ReaderStateProvider extends ChangeNotifier {
           // ignore: use_build_context_synchronously
           configurations.locator!.currentContext!,
           MaterialPageRoute(
-            builder: (context) => WithdrawalScreen(),
+            builder: (context) => WithdrawalScreen(
+              predefinedAmount: configurations.amount,
+            ),
           ),
         );
         break;
@@ -263,8 +265,13 @@ class ReaderStateProvider extends ChangeNotifier {
         break;
 
       case onRequestSetAmount:
-        SetAmountParams amountParams = SetAmountParams(
-            amount: "${(extractAmount(amountCredio.text) ?? 0) * 100}");
+        num amount =
+            configurations.amount ?? extractAmount(amountCredio.text) ?? 0;
+        SetAmountParams amountParams =
+            SetAmountParams(amount: "${(amount * 100).toInt()}");
+
+        // SetAmountParams amountParams = SetAmountParams(
+        //     amount: "${(extractAmount(amountCredio.text) ?? 0) * 100}");
 
         _flutterPluginQPos.setAmount(amountParams.toJson());
         break;
@@ -297,11 +304,41 @@ class ReaderStateProvider extends ChangeNotifier {
             webhookURL: configurations.webhookURL,
           );
 
-          final doRoute = await formSubmitDialog(
-            context: pinContext!,
-            prompt: 'Please wait while we process your transaction...',
-            future: cardService.merchantCardTopUp(readerTransactionRequest),
-          );
+          final doRoute = await (configurations.customLoader != null
+              ? configurations.customLoader!<dynamic>(
+                  context: pinContext!,
+                  prompt: 'Please wait while we process your transaction...',
+                  errorMessage:
+                      "An unexpected error occurred. Please try again.",
+                  future:
+                      cardService.merchantCardTopUp(readerTransactionRequest),
+                  onError: (String errorMessage) {
+                    showDialog(
+                      context: pinContext!,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text('Error'),
+                          content: Text(errorMessage),
+                          actions: <Widget>[
+                            TextButton(
+                              child: Text('OK'),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                )
+              : formSubmitDialog(
+                  context: pinContext!,
+                  prompt: 'Please wait while we process your transaction...',
+                  future:
+                      cardService.merchantCardTopUp(readerTransactionRequest),
+                ));
+
           if (doRoute != null) {
             showCupertinoModalBottomSheet(
               context: pinContext!,

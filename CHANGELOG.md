@@ -1,11 +1,19 @@
-## 0.0.4
+## 0.0.5
 
-## Version 0.0.4 - 2024-08-16
+## Version 0.0.4 - 2024-10-02
+
+### Added
+- Customizable amount input: Developers can now customize the appearance of the amount input field.
+- Predefined amount option: Added ability to set a predefined amount, which skips the amount input screen.
+- Customizable account type selection: Introduced a new `customSelectionSheet` option in `CredioConfig` for custom account type selection UI.
+- Customizable PIN entry: Added `customPinEntry` option in `CredioConfig` for custom PIN entry UI.
+- Customizable loader: Introduced `customLoader` in `CredioConfig` for custom loading and error handling during transactions.
 
 ### Changed
-- API key format and generation process. The API key is now generated through the Credio TrackMoney platform (https://trackmoney.crediometer.com/) instead of using the phone number from the Credio application/admin.
-- Updated documentation to reflect the new API key format and generation process.
+- Enhanced error handling in custom loaders to provide a more consistent user experience.
+- Updated `CredioConfig` to include new customization options.
+- Refactored `WithdrawalScreen` and `PinInputScreen` to support new customization features.
 
-### Important
-- Users need to sign up on https://trackmoney.crediometer.com/ to generate their new API key.
-- Existing integrations using phone numbers as API keys will need to be updated to the new API key format.
+### Improved
+- Better type safety and error reporting in customizable components.
+- More flexible UI customization options throughout the payment flow.

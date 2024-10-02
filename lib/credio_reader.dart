@@ -21,7 +21,9 @@ class ReaderButton extends StatefulWidget {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => WithdrawalScreen(),
+        builder: (context) => WithdrawalScreen(
+          predefinedAmount: credioConfig.amount,
+        ),
       ),
     );
   }
@@ -112,7 +114,9 @@ class ReaderButtonContent extends StatelessWidget {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => WithdrawalScreen(),
+          builder: (context) => WithdrawalScreen(
+            predefinedAmount: readerState.configurations.amount,
+          ),
         ),
       );
     }

@@ -27,6 +27,13 @@ Then, run `flutter pub get` in your terminal to install the package.
   - `metaData` (Map<String, dynamic>, optional): This parameter allows you to include additional custom data with each transaction. You can use it to pass any relevant information that you want to associate with the transaction, such as order IDs, customer information, or any other custom fields specific to your application.
   - `initializerButton` (Widget, optional): A custom widget to be used as the initializer button.
   - `buttonConfiguration` (ButtonConfiguration, optional): Configuration for customizing the appearance of the ReaderButton.
+  - `amount` (double, optional): A predefined amount for the transaction. If set, the amount input textbox will be not be shown.
+  - `amountInputDecoration` (InputDecoration, optional): Custom decoration for the amount input field.
+  - `accountTypes` (List<SelectionData>, optional): Custom list of account types for selection.
+  - `customSelectionSheet` (Function, optional): Custom implementation for the account type selection sheet.
+  - `customPinEntry` (Function, optional): Custom implementation for the PIN entry widget.
+  - `customLoader` (Function, optional): Custom implementation for the loading and error handling during transactions.
+
 
 
   *Example of `CredioConfig` class:
@@ -42,25 +49,51 @@ Then, run `flutter pub get` in your terminal to install the package.
   final webHookUrl = 'your_webHook_url';
 
   final CredioConfig config = CredioConfig(
-    apiKey,
-    '2070FLRX',
-    webHookUrl,
-    locator<NavigationService>().navigatorKey,
-    initializerButton: Text("I can use a single Text"),
-    buttonConfiguration: ButtonConfiguration(
-      buttonStyle: ElevatedButton.styleFrom(
-        backgroundColor: Colors.green,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(
-            Radius.circular(
-              15.0,
-            ),
-          ),
-        ),
+  apiKey,
+  '2070FLRX',
+  webHookUrl,
+  locator<NavigationService>().navigatorKey,
+  initializerButton: Text("Custom Initializer Button"),
+  buttonConfiguration: ButtonConfiguration(
+    buttonStyle: ElevatedButton.styleFrom(
+      backgroundColor: Colors.green,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(15.0)),
       ),
     ),
-  );
-  ```
+  ),
+  amount: 100, // Predefined amount
+  amountInputDecoration: InputDecoration(
+    labelText: 'Enter withdrawal amount',
+    prefixIcon: Icon(Icons.attach_money),
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(10),
+    ),
+  ),
+  accountTypes: [
+    SelectionData(selection: 0, title: "Personal Account"),
+    SelectionData(selection: 1, title: "Business Account"),
+  ],
+  customSelectionSheet: (BuildContext context, List<SelectionData> data, Function(SelectionData) onSelect) {
+    // Custom implementation for account type selection
+  },
+  customPinEntry: (BuildContext context, Function(String) onCompleted) {
+    // Custom implementation for PIN entry
+  },
+  customLoader: <T>({
+    required BuildContext context,
+    required Future<T> future,
+    required String prompt,
+    required String errorMessage,
+    String? successMessage,
+    VoidCallback? action,
+    required Function(String) onError,
+  }) async {
+    // Custom implementation for loading and error handling
+  },
+);```
+
+Note: For detailed usage of these new customization options, please refer to the example app in the package repository.
 
 ## Permissions
 
