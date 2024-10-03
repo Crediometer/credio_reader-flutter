@@ -1,4 +1,3 @@
-
 import 'package:flutter/widgets.dart'
     show
         BuildContext,
@@ -8,12 +7,10 @@ import 'package:flutter/widgets.dart'
         RenderBox,
         Offset;
 
-
 enum ScreenType {
   MOBILE,
   TABLET,
 }
-
 
 class _CredioDimension {
   late MediaQueryData _queryData;

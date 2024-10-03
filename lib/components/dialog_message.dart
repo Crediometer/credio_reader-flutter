@@ -68,8 +68,6 @@ class DialogMessage extends StatelessWidget {
   }
 
   Widget _messageIcon() {
-
-
     switch (messageType) {
       case MessageType.Error:
         return Icon(

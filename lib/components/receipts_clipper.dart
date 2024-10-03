@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-
 class ReceiptClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {

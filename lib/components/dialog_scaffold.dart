@@ -13,7 +13,7 @@ class CredioDialogScaffold extends StatelessWidget {
     required this.child,
     required this.showClose,
     required this.padded,
-    this.color =  const Color(0xffB11226),
+    this.color = const Color(0xffB11226),
     this.future,
   });
 
@@ -47,7 +47,6 @@ class CredioDialogScaffold extends StatelessWidget {
                     alignment: Alignment.topRight,
                     child: InkWell(
                       onTap: () {
-                      
                         Navigator.of(context).pop(null);
                       },
                       child: Container(

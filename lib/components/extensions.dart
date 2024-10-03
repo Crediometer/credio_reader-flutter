@@ -1,6 +1,5 @@
 import 'package:flutter/widgets.dart';
 
-
 import 'dimensions.dart';
 
 extension WidgetExtensions on Widget {
