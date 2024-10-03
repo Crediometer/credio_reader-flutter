@@ -1,19 +1,12 @@
-## 0.0.5
+## 0.0.6
 
-## Version 0.0.5 - 2024-10-02
+## Version 0.0.6 - 2024-10-03
 
 ### Added
-- Customizable amount input: Developers can now customize the appearance of the amount input field.
-- Predefined amount option: Added ability to set a predefined amount, which skips the amount input screen.
-- Customizable account type selection: Introduced a new `customSelectionSheet` option in `CredioConfig` for custom account type selection UI.
-- Customizable PIN entry: Added `customPinEntry` option in `CredioConfig` for custom PIN entry UI.
-- Customizable loader: Introduced `customLoader` in `CredioConfig` for custom loading and error handling during transactions.
+- Dynamic amount setter in CredioConfig class.
+- Ability to skip withdrawal screen when amount is predefined.
 
 ### Changed
-- Enhanced error handling in custom loaders to provide a more consistent user experience.
-- Updated `CredioConfig` to include new customization options.
-- Refactored `WithdrawalScreen` and `PinInputScreen` to support new customization features.
-
-### Improved
-- Better type safety and error reporting in customizable components.
-- More flexible UI customization options throughout the payment flow.
+- Account types are now predefined and not customizable.
+- Updated `WithdrawalScreen` to handle predefined amounts.
+- Improved error handling and state management in `ReaderStateProvider`.

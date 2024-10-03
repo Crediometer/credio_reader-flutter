@@ -39,7 +39,7 @@ class _MyAppState extends State<MyApp> {
       '2070FLRX',
       webHookUrl,
       locator<NavigationService>().navigatorKey,
-      initializerButton: Text("I can use a single Text"),
+      initializerButton: const Text("I can use a single Text"),
       buttonConfiguration: ButtonConfiguration(
         buttonStyle: ElevatedButton.styleFrom(
           backgroundColor: Colors.green,
@@ -52,7 +52,6 @@ class _MyAppState extends State<MyApp> {
           ),
         ),
       ),
-      amount: 100,
       amountInputDecoration: InputDecoration(
         labelText: 'Enter withdrawal amount',
         prefixIcon: const Icon(Icons.attach_money),
@@ -60,17 +59,13 @@ class _MyAppState extends State<MyApp> {
           borderRadius: BorderRadius.circular(10),
         ),
       ),
-      accountTypes: [
-        SelectionData(selection: 0, title: "Personal Account"),
-        SelectionData(selection: 1, title: "Business Account"),
-      ],
       customSelectionSheet: (BuildContext context, List<SelectionData> data,
           Function(SelectionData) onSelect) {
         showDialog(
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: Text('Select Account Type'),
+              title: const Text('Select Account Type'),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: data
@@ -97,7 +92,7 @@ class _MyAppState extends State<MyApp> {
             obscureText: true,
             keyboardType: TextInputType.number,
             maxLength: 4,
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               labelText: 'Enter PIN',
               border: OutlineInputBorder(),
             ),
@@ -127,8 +122,8 @@ class _MyAppState extends State<MyApp> {
                 content: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    CircularProgressIndicator(),
-                    SizedBox(height: 20),
+                    const CircularProgressIndicator(),
+                    const SizedBox(height: 20),
                     Text(prompt),
                   ],
                 ),
@@ -138,31 +133,33 @@ class _MyAppState extends State<MyApp> {
 
           final result = await future;
 
-          Navigator.of(context).pop();
+          if (context.mounted) Navigator.of(context).pop();
 
           if (successMessage != null) {
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  title: Text('Success'),
-                  content: Text(successMessage),
-                  actions: <Widget>[
-                    TextButton(
-                      child: Text('OK'),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                  ],
-                );
-              },
-            );
+            if (context.mounted) {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: const Text('Success'),
+                    content: Text(successMessage),
+                    actions: <Widget>[
+                      TextButton(
+                        child: const Text('OK'),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
+            }
           }
 
           return result;
         } catch (error) {
-          Navigator.of(context).pop();
+          if (context.mounted) Navigator.of(context).pop();
 
           // Call onError to handle the error
           onError(errorMessage);
@@ -174,6 +171,18 @@ class _MyAppState extends State<MyApp> {
     if (mounted) {
       setState(() {});
     }
+  }
+
+  void _setAmount(double amount) {
+    setState(() {
+      _config.amount = amount;
+    });
+  }
+
+  void _clearAmount() {
+    setState(() {
+      _config.amount = null;
+    });
   }
 
   @override
@@ -188,7 +197,28 @@ class _MyAppState extends State<MyApp> {
         body: Center(
           child: Builder(
             builder: (context) {
-              return ReaderButton(_config);
+              return Column(
+                children: [
+                  Text('Current amount: ${_config.amount ?? "Not set"}'),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () => _setAmount(100.0),
+                    child: const Text('Set Amount to 100'),
+                  ),
+                  const SizedBox(height: 10),
+                  ElevatedButton(
+                    onPressed: () => _setAmount(200.0),
+                    child: const Text('Set Amount to 200'),
+                  ),
+                  const SizedBox(height: 10),
+                  ElevatedButton(
+                    onPressed: _clearAmount,
+                    child: const Text('Clear Amount'),
+                  ),
+                  const SizedBox(height: 20),
+                  ReaderButton(_config),
+                ],
+              );
             },
           ),
         ),

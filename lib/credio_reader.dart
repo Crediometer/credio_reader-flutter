@@ -17,16 +17,16 @@ class ReaderButton extends StatefulWidget {
 
   const ReaderButton(this.credioConfig, {Key? key}) : super(key: key);
 
-  Future<void> initiateWithdrawal(BuildContext context) async {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => WithdrawalScreen(
-          predefinedAmount: credioConfig.amount,
-        ),
-      ),
-    );
-  }
+  // Future<void> initiateWithdrawal(BuildContext context) async {
+  //   Navigator.push(
+  //     context,
+  //     MaterialPageRoute(
+  //       builder: (context) => WithdrawalScreen(
+  //         readerState: ,
+  //       ),
+  //     ),
+  //   );
+  // }
 
   @override
   _ReaderButtonState createState() => _ReaderButtonState();
@@ -115,7 +115,7 @@ class ReaderButtonContent extends StatelessWidget {
         context,
         MaterialPageRoute(
           builder: (context) => WithdrawalScreen(
-            predefinedAmount: readerState.configurations.amount,
+            readerState: readerState,
           ),
         ),
       );

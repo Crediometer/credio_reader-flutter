@@ -10,9 +10,8 @@ class CredioConfig {
   String? webhookURL;
   ButtonConfiguration? buttonConfiguration;
   Widget? initializerButton;
-  double? amount;
+  // double? amount;
   InputDecoration? amountInputDecoration;
-  List<SelectionData>? accountTypes;
   void Function(BuildContext, List<SelectionData>, Function(SelectionData))?
       customSelectionSheet;
 
@@ -29,6 +28,16 @@ class CredioConfig {
 
   late String apiKey;
 
+  double? _amount;
+
+  // Getter for amount
+  double? get amount => _amount;
+
+  // Setter for amount
+  set amount(double? value) {
+    _amount = value;
+  }
+
   CredioConfig(
     this.apiKey,
     this.terminalId,
@@ -37,9 +46,8 @@ class CredioConfig {
     this.initializerButton,
     this.metaData,
     this.buttonConfiguration,
-    this.amount,
+    // this.amount,
     this.amountInputDecoration,
-    this.accountTypes,
     this.customSelectionSheet,
     this.customPinEntry,
     this.customLoader,

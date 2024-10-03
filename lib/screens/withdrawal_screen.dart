@@ -9,12 +9,10 @@ import '../components/app_selection_sheet.dart';
 import '../consts/app_strings.dart';
 
 class WithdrawalScreen extends StatefulWidget {
-  final double? predefinedAmount;
+  final ReaderStateProvider readerState;
 
-  const WithdrawalScreen({
-    Key? key,
-    this.predefinedAmount,
-  }) : super(key: key);
+  const WithdrawalScreen({Key? key, required this.readerState})
+      : super(key: key);
 
   @override
   State<WithdrawalScreen> createState() => _WithdrawalScreenState();
@@ -29,16 +27,29 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
   //   "Credit",
   // ];
 
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (widget.readerState.configurations.amount != null) {
+        _proceedToAccountSelection(widget.readerState);
+      }
+    });
+  }
+
+  void _proceedToAccountSelection(ReaderStateProvider readerState) {
+    _showAccountTypeSelection(context, readerState);
+  }
+
   void _showAccountTypeSelection(
       BuildContext context, ReaderStateProvider readerState) {
     final config = readerState.configurations;
-    final accountTypes = config.accountTypes ??
-        [
-          SelectionData(selection: 0, title: "Universal"),
-          SelectionData(selection: 1, title: "Savings"),
-          SelectionData(selection: 2, title: "Current"),
-          SelectionData(selection: 3, title: "Credit"),
-        ];
+    final accountTypes = [
+      SelectionData(selection: 0, title: "Universal"),
+      SelectionData(selection: 1, title: "Savings"),
+      SelectionData(selection: 2, title: "Current"),
+      SelectionData(selection: 3, title: "Credit"),
+    ];
 
     if (config.customSelectionSheet != null) {
       config.customSelectionSheet!(
@@ -68,6 +79,13 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
       create: (context) => ReaderStateProvider.instance(),
       builder: (ctx, child) {
         final readerState = ctx.read<ReaderStateProvider>();
+
+        if (readerState.configurations.amount != null) {
+          return Container(
+            color: Colors.white,
+          );
+        }
+
         return Scaffold(
           key: _scaffoldKey,
           extendBodyBehindAppBar: true,
@@ -97,83 +115,70 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                   ),
                 ),
                 const SizedBox(height: 30),
-                if (widget.predefinedAmount == null) ...[
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 35.0),
-                    child: Text(
-                      'How much do you want to withdraw',
-                      style: TextStyle(
-                        fontSize: 18,
-                      ),
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 35.0),
+                  child: Text(
+                    'How much do you want to withdraw',
+                    style: TextStyle(
+                      fontSize: 18,
                     ),
                   ),
-                  const SizedBox(height: 20),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 35.0),
-                    child: TextFormField(
-                      autofocus: true,
-                      controller: readerState.amountCredio,
-                      cursorColor: const Color(0xFF656F78),
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [
-                        FilteringTextInputFormatter.digitsOnly,
-                        AmountFormatter()
-                      ],
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500,
-                      ),
-                      decoration: readerState
-                              .configurations.amountInputDecoration ??
-                          InputDecoration(
-                            hintText: 'Amount',
-                            hintStyle: const TextStyle(
-                              fontSize: 12.0,
-                              color: Color(0xFF737373),
-                            ),
-                            contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 12),
-                            suffixIcon: Padding(
-                              padding: const EdgeInsets.only(right: 12.0),
-                              child: SvgPicture.string(nairaSvg),
-                            ),
-                            border: OutlineInputBorder(
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(3.0)),
-                              borderSide: BorderSide(
-                                color: Colors.black.withOpacity(0.4),
-                                width: 1.0,
-                              ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(3.0)),
-                              borderSide: BorderSide(
-                                color: const Color(0xFF333333).withOpacity(0.2),
-                                width: 1.0,
-                              ),
-                            ),
-                            errorBorder: const OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Color(0xffD11C1C),
-                                width: 1,
-                              ),
+                ),
+                const SizedBox(height: 20),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 35.0),
+                  child: TextFormField(
+                    autofocus: true,
+                    controller: readerState.amountCredio,
+                    cursorColor: const Color(0xFF656F78),
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      AmountFormatter()
+                    ],
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    decoration: readerState
+                            .configurations.amountInputDecoration ??
+                        InputDecoration(
+                          hintText: 'Amount',
+                          hintStyle: const TextStyle(
+                            fontSize: 12.0,
+                            color: Color(0xFF737373),
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 12),
+                          suffixIcon: Padding(
+                            padding: const EdgeInsets.only(right: 12.0),
+                            child: SvgPicture.string(nairaSvg),
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(3.0)),
+                            borderSide: BorderSide(
+                              color: Colors.black.withOpacity(0.4),
+                              width: 1.0,
                             ),
                           ),
-                    ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(3.0)),
+                            borderSide: BorderSide(
+                              color: const Color(0xFF333333).withOpacity(0.2),
+                              width: 1.0,
+                            ),
+                          ),
+                          errorBorder: const OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Color(0xffD11C1C),
+                              width: 1,
+                            ),
+                          ),
+                        ),
                   ),
-                ] else ...[
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 35.0),
-                    child: Text(
-                      'Withdrawal amount: ${widget.predefinedAmount?.toStringAsFixed(2)}',
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ],
+                ),
                 const SizedBox(height: 195),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 31.0),

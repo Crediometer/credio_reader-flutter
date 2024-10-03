@@ -49,49 +49,149 @@ Then, run `flutter pub get` in your terminal to install the package.
   final webHookUrl = 'your_webHook_url';
 
   final CredioConfig config = CredioConfig(
-  apiKey,
-  '2070FLRX',
-  webHookUrl,
-  locator<NavigationService>().navigatorKey,
-  initializerButton: Text("Custom Initializer Button"),
-  buttonConfiguration: ButtonConfiguration(
-    buttonStyle: ElevatedButton.styleFrom(
-      backgroundColor: Colors.green,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(15.0)),
+      apiKey,
+      '2070FLRX',
+      webHookUrl,
+      locator<NavigationService>().navigatorKey,
+      initializerButton: const Text("I can use a single Text"),
+      buttonConfiguration: ButtonConfiguration(
+        buttonStyle: ElevatedButton.styleFrom(
+          backgroundColor: Colors.green,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(
+              Radius.circular(
+                15.0,
+              ),
+            ),
+          ),
+        ),
       ),
-    ),
-  ),
-  amount: 100, // Predefined amount
-  amountInputDecoration: InputDecoration(
-    labelText: 'Enter withdrawal amount',
-    prefixIcon: Icon(Icons.attach_money),
-    border: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(10),
-    ),
-  ),
-  accountTypes: [
-    SelectionData(selection: 0, title: "Personal Account"),
-    SelectionData(selection: 1, title: "Business Account"),
-  ],
-  customSelectionSheet: (BuildContext context, List<SelectionData> data, Function(SelectionData) onSelect) {
-    // Custom implementation for account type selection
-  },
-  customPinEntry: (BuildContext context, Function(String) onCompleted) {
-    // Custom implementation for PIN entry
-  },
-  customLoader: <T>({
-    required BuildContext context,
-    required Future<T> future,
-    required String prompt,
-    required String errorMessage,
-    String? successMessage,
-    VoidCallback? action,
-    required Function(String) onError,
-  }) async {
-    // Custom implementation for loading and error handling
-  },
+      amountInputDecoration: InputDecoration(
+        labelText: 'Enter withdrawal amount',
+        prefixIcon: const Icon(Icons.attach_money),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+      ),
+      customSelectionSheet: (BuildContext context, List<SelectionData> data,
+          Function(SelectionData) onSelect) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Select Account Type'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: data
+                    .map(
+                      (item) => ElevatedButton(
+                        child: Text(item.title!),
+                        onPressed: () {
+                          onSelect(item);
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    )
+                    .toList(),
+              ),
+            );
+          },
+        );
+      },
+      customPinEntry: (BuildContext context, Function(String) onCompleted) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 48.0),
+          child: TextFormField(
+            autofocus: true,
+            obscureText: true,
+            keyboardType: TextInputType.number,
+            maxLength: 4,
+            decoration: const InputDecoration(
+              labelText: 'Enter PIN',
+              border: OutlineInputBorder(),
+            ),
+            onChanged: (value) {
+              if (value.length == 4) {
+                onCompleted(value);
+              }
+            },
+          ),
+        );
+      },
+      customLoader: <T>({
+        required BuildContext context,
+        required Future<T> future,
+        required String prompt,
+        required String errorMessage,
+        String? successMessage,
+        VoidCallback? action,
+        required Function(String) onError,
+      }) async {
+        try {
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const CircularProgressIndicator(),
+                    const SizedBox(height: 20),
+                    Text(prompt),
+                  ],
+                ),
+              );
+            },
+          );
+
+          final result = await future;
+
+          if (context.mounted) Navigator.of(context).pop();
+
+          if (successMessage != null) {
+            if (context.mounted) {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: const Text('Success'),
+                    content: Text(successMessage),
+                    actions: <Widget>[
+                      TextButton(
+                        child: const Text('OK'),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
+            }
+          }
+
+          return result;
+        } catch (error) {
+          if (context.mounted) Navigator.of(context).pop();
+
+          // Call onError to handle the error
+          onError(errorMessage);
+
+          return null;
+        }
+      },
 );```
+
+### Predefined Account Types
+The plugin now uses predefined account types. These are:
+
+- Universal (selection: 0)
+- Savings (selection: 1)
+- Current (selection: 2)
+- Credit (selection: 3)
+
+These account types are used in the account selection process. If you're implementing a custom selection UI, make sure to use these predefined types.
 
 Note: For detailed usage of these new customization options, please refer to the example app in the package repository.
 

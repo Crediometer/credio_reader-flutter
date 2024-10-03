@@ -36,7 +36,7 @@ class ReaderStateProvider extends ChangeNotifier {
 
   late CredioConfig _configurations;
 
-  ReaderStateProvider._(); // Private constructor
+  ReaderStateProvider._();
 
   static ReaderStateProvider? _instance;
 
@@ -252,7 +252,7 @@ class ReaderStateProvider extends ChangeNotifier {
           configurations.locator!.currentContext!,
           MaterialPageRoute(
             builder: (context) => WithdrawalScreen(
-              predefinedAmount: configurations.amount,
+              readerState: _instance!,
             ),
           ),
         );
